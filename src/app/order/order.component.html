@@ -1,0 +1,87 @@
+<div class="order" style="align-items: stretch">
+  <hr>
+  <h1>Tu orden de compra</h1>
+
+  <footer class="footer">
+
+    <div class="">
+      <div class="footer-content">
+        <!--        <div class="footer-title">-->
+        <!--          <hr>-->
+        <!--        </div>-->
+
+        <div class="formulario-content">
+          <div class="datos">
+
+            <label>Orden #:</label>
+            <span>{{order.name}}</span>
+
+            <!--          <input type="text" id="user" name="user" placeholder="Ingresa tu Nombre">-->
+            <label>Cliente:</label>
+            <span>{{order.partner.name}}</span>
+
+            <label>Punto de venta:</label>
+            <span>{{order.config_id}}</span>
+
+            <label>Fecha de venta:</label>
+            <span>{{order.date_order}}</span>
+
+            <label>Referencia de venta:</label>
+            <span>{{order.pos_reference}}</span>
+
+            <label>Nota:</label>
+            <span>{{order.note}}</span>
+
+            <label>Impuestos:</label>
+            <span>${{order.amount_tax}}</span>
+
+            <label>Total:</label>
+            <span>${{order.amount_total}}</span>
+
+            <label>Pagado:</label>
+            <span>${{order.amount_paid}}</span>
+          </div>
+          <div class="conceptos">
+            <hr>
+            <table>
+              <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio unitario</th>
+                <th>Subtotal</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let line of order.lines">
+                <td>{{line.product_name}}</td>
+                <td>{{line.qty}}</td>
+                <td>{{line.unit_price}}</td>
+                <td>{{line.subtotal}}</td>
+              </tr>
+              </tbody>
+            </table>
+            <br>
+            <div class="input-group input-group-sm mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="Span">Uso CFDI:</span>
+              </div>
+              <select [(ngModel)]="l10n_mx_edi_usage" required name="usage"
+                      class="form-control" style="width: 100%">
+                <option [ngValue]="'0'" disabled>Selecciona un uso CFDI</option>
+                <option *ngFor="let reg of ediUse" [ngValue]="reg.id">{{reg.name}}</option>
+              </select>
+              <!--  <input name="ctl00$Header$TB_FecRec" type="text" id="Header_TB_FecRec" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" placeholder="Fecha del recibo" data-val-required="Date is required" required="" />-->
+            </div>
+            <div *ngIf="showButton" class="buscar" align="center">
+              <div class="btn-layer"></div>
+              <br>
+              <button id="buscar" (click)="TimbrarFactura()" value="buscar"><span *ngIf="isWorking" class="fa fa-spinner fa-spin"></span> Facturar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </footer>
+</div>

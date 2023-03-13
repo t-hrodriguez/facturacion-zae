@@ -1,0 +1,96 @@
+<!--<form #loginForm="ngForm" (ngSubmit)="SearchSaleOrder()" ngNativeValidate>-->
+<!--  <div>-->
+<!--    <label for="rfc">RFC</label>-->
+<!--    <input id="rfc" [(ngModel)]="rfc" name="rfc"/>-->
+<!--  </div>-->
+<!--  <div>-->
+<!--    <label for="pos">Punto de venta</label>-->
+<!--    <input id="pos" [(ngModel)]="pointOfSale" name="pos"/>-->
+<!--  </div>-->
+<!--  <div>-->
+<!--    <label for="refGaspar">Referencia Gaspar</label>-->
+<!--    <input id="refGaspar" [(ngModel)]="gasparRef" name="refGaspar"/>-->
+<!--  </div>-->
+<!--  <div>-->
+<!--    <label for="orden"># Orden</label>-->
+<!--    <input id="orden" [(ngModel)]="saleRef" name="orden"/>-->
+<!--  </div>-->
+<!--  <div>-->
+<!--    <label for="fecha">Fecha de venta</label>-->
+<!--    <input id="fecha" [(ngModel)]="saleDate" name="fecha"/>-->
+<!--  </div>-->
+<!--  <button>Buscar</button>-->
+<!--</form>-->
+
+
+<br>
+<br>
+<br>
+<div class="wrapper">
+  <div class="imagen">
+    <IMG SRC="assets/img/llamita.png" WIDTH=40 HEIGHT=40>
+  </div>
+  <div class="title-text">
+    <div class="title">
+      Regístrate
+    </div>
+  </div>
+  <a> Llenar los recuadros con los datos correspondientes</a>
+  <br>
+  <br>
+  <div class="form-inner">
+    <form #loginForm="ngForm" (ngSubmit)="CreateCustomer()" ngNativeValidate class="RFC">
+      <span class="input-group-text" id="Span5">Nombre o Razón Social</span>
+      <input [(ngModel)]="name" name="Name" type="text" id="Header_TB_NumRfc" class="form-control"
+             aria-label="Small" aria-describedby="inputGroup-sizing-sm" placeholder=""
+             required="true" style="text-transform: uppercase;" />
+      <pre id="resultado"></pre>
+      <span id="Header_LB_Messag" style="color:#CC2128;font-size:6pt;"></span>
+      <div class="input-group input-group-sm mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="Span4">RFC:</span>
+        </div>
+        <input [(ngModel)]="vat" name="vat" id="vat"
+               type="text" placeholder="XAXX" class="form-control">
+      </div>
+      <div class="input-group input-group-sm mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="Span1">E-mail</span>
+        </div>
+        <input [(ngModel)]="email" name="email" type="text" id="email" class="form-control"
+               aria-label="Small" aria-describedby="inputGroup-sizing-sm"
+               required="" />
+      </div>
+
+      <div class="input-group input-group-sm mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="Span3">Código Postal:</span>
+        </div>
+        <input [(ngModel)]="zip" name="zip" type="text" class="form-control"
+               aria-label="Small" aria-describedby="inputGroup-sizing-sm"
+               required="" >
+        <!--  <input name="ctl00$Header$TB_FecRec" type="text" id="Header_TB_FecRec" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" placeholder="Fecha del recibo" data-val-required="Date is required" required="" />-->
+      </div>
+
+      <div class="input-group input-group-sm mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="Span">Régimen Fiscal:</span>
+        </div>
+        <select [(ngModel)]="l10n_mx_edi_fiscal_regime" required name="fiscalRegime"
+                class="form-control">
+          <option [ngValue]="null" disabled>Selecciona un Régimen Fiscal</option>
+          <option *ngFor="let reg of fiscalRegimes" [ngValue]="reg.id">{{reg.name}}</option>
+        </select>
+        <!--  <input name="ctl00$Header$TB_FecRec" type="text" id="Header_TB_FecRec" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" placeholder="Fecha del recibo" data-val-required="Date is required" required="" />-->
+      </div>
+
+      <br>
+
+      <div class="buscar" align="center">
+        <div class="btn-layer"></div>
+        <button id="buscar" type="submit" value="buscar"> Regístrate </button>
+      </div>
+    </form>
+  </div>
+</div>
+
