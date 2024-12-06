@@ -19,10 +19,11 @@ export class ClienteService {
     this.url = GLOBAL.url;
   }
 
-  ObtenerCliente(rfc: string): Observable<any>{
+  ObtenerCliente(rfc: string, cid: number): Observable<any>{
     let body = {
       "params": {
-        "rfc": rfc
+        "rfc": rfc,
+        "cid": cid
       }
     };
     return this.httpClient.post(this.url + "cliente", JSON.stringify(body), HTTP_HEADERS);

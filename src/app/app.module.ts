@@ -11,6 +11,8 @@ import { OrderComponent } from './order/order.component';
 import { ClienteComponent } from './cliente/cliente.component';
 import { BranchesComponent } from './branches/branches.component';
 import { ServicesComponent } from './services/services.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { FooterComponent } from './components/footer/footer.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +22,9 @@ import { ServicesComponent } from './services/services.component';
     OrderComponent,
     ClienteComponent,
     BranchesComponent,
-    ServicesComponent
+    ServicesComponent,
+    NavbarComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule,

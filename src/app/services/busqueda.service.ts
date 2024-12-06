@@ -14,12 +14,12 @@ export class BusquedaService {
     this.url = GLOBAL.url;
   }
 
-  SearchOrder(pointOfSale:string, saleRef:string, companyId: number, tipo: number, date: Date): Observable<any>{
-    let args = [["config_id", "like", pointOfSale], ["company_id", "=", companyId]]
+  SearchOrder(pointOfSale:number, saleRef:string, companyId: number, tipo: number, date: Date): Observable<any>{
+    let args = []
     if (tipo == 1)
-      args.push(["pos_reference", "=", saleRef]);
+      args.push(["pos_reference", "like", saleRef], ["company_id", "=", companyId]);
     else
-      args.push(["note", "=", saleRef]);
+      args.push(["note", "=", saleRef], ["config_id", "=", pointOfSale], ["company_id", "=", companyId]);
     let headers = new HttpHeaders({
       'Authorization': GLOBAL.password,
       'Content-Type': 'application/json'

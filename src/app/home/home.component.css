@@ -1,0 +1,31 @@
+
+.welcome{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+h1{
+  font-size: 50px;
+  color:#fff;
+  font-weight: 200;
+}
+hr{
+  width: 400px;
+  height: 2px;
+  background: #fff;
+  border: none;
+  margin-top: 5px;
+}
+p{
+  font-size: 20px;
+  color: #fff;
+  margin-top: 20px;
+}

@@ -1,87 +1,80 @@
-<div class="order" style="align-items: stretch">
-  <hr>
-  <h1>Tu orden de compra</h1>
+<div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
+  <div class="mensaje" [ngClass]="tipoAlert" *ngIf="mensaje">
+    <h3 class="error-header">{{mensajeHeader}}</h3>
+    <div id="lista-errores">
+      {{mensajeText}}
+    </div>
+  </div>
+  <h1 class="text-2xl font-bold mb-4">Tu orden de compra</h1>
 
-  <footer class="footer">
+  <div class="mb-6 datos">
 
-    <div class="">
-      <div class="footer-content">
-        <!--        <div class="footer-title">-->
-        <!--          <hr>-->
-        <!--        </div>-->
+    <label class="text-gray-700">Cliente: </label>
+    <span>{{order.partner.name}}</span>
 
-        <div class="formulario-content">
-          <div class="datos">
+    <label class="text-gray-700">No. Orden:</label>
+    <span>{{order.name}}</span>
 
-            <label>Orden #:</label>
-            <span>{{order.name}}</span>
+    <label class="text-gray-700">Punto de venta:</label>
+    <span>{{order.config_id}}</span>
 
-            <!--          <input type="text" id="user" name="user" placeholder="Ingresa tu Nombre">-->
-            <label>Cliente:</label>
-            <span>{{order.partner.name}}</span>
+    <label class="text-gray-700">Fecha de venta:</label>
+    <span>{{order.date_order}}</span>
 
-            <label>Punto de venta:</label>
-            <span>{{order.config_id}}</span>
+    <label class="text-gray-700">Referencia de venta:</label>
+    <span>{{order.pos_reference}}</span>
 
-            <label>Fecha de venta:</label>
-            <span>{{order.date_order}}</span>
+    <label class="text-gray-700">Nota:</label>
+    <span>{{order.note}}</span>
+  </div>
 
-            <label>Referencia de venta:</label>
-            <span>{{order.pos_reference}}</span>
-
-            <label>Nota:</label>
-            <span>{{order.note}}</span>
-
-            <label>Impuestos:</label>
-            <span>${{order.amount_tax}}</span>
-
-            <label>Total:</label>
-            <span>${{order.amount_total}}</span>
-
-            <label>Pagado:</label>
-            <span>${{order.amount_paid}}</span>
-          </div>
-          <div class="conceptos">
-            <hr>
-            <table>
-              <thead>
-              <tr>
-                <th>Producto</th>
-                <th>Cantidad</th>
-                <th>Precio unitario</th>
-                <th>Subtotal</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr *ngFor="let line of order.lines">
-                <td>{{line.product_name}}</td>
-                <td>{{line.qty}}</td>
-                <td>{{line.unit_price}}</td>
-                <td>{{line.subtotal}}</td>
-              </tr>
-              </tbody>
-            </table>
-            <br>
-            <div class="input-group input-group-sm mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="Span">Uso CFDI:</span>
-              </div>
-              <select [(ngModel)]="l10n_mx_edi_usage" required name="usage"
-                      class="form-control" style="width: 100%">
-                <option [ngValue]="'0'" disabled>Selecciona un uso CFDI</option>
-                <option *ngFor="let reg of ediUse" [ngValue]="reg.id">{{reg.name}}</option>
-              </select>
-              <!--  <input name="ctl00$Header$TB_FecRec" type="text" id="Header_TB_FecRec" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" placeholder="Fecha del recibo" data-val-required="Date is required" required="" />-->
-            </div>
-            <div *ngIf="showButton" class="buscar" align="center">
-              <div class="btn-layer"></div>
-              <br>
-              <button id="buscar" (click)="TimbrarFactura()" value="buscar"><span *ngIf="isWorking" class="fa fa-spinner fa-spin"></span> Facturar</button>
-            </div>
-          </div>
-        </div>
-      </div>
+  <table class="min-w-full border-collapse border border-gray-300">
+    <thead>
+    <tr class="bg-gray-200">
+      <th class="border border-gray-300 px-4 py-2">Producto</th>
+      <th class="border border-gray-300 px-4 py-2">Cantidad</th>
+      <th class="border border-gray-300 px-4 py-2">Precio Unitario</th>
+      <th class="border border-gray-300 px-4 py-2">Subtotal</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let line of order.lines">
+      <td class="border border-gray-300 px-4 py-2">{{line.product_name}}</td>
+      <td class="border border-gray-300 px-4 py-2">{{line.qty}}</td>
+      <td class="border border-gray-300 px-4 py-2">{{line.unit_price}}</td>
+      <td class="border border-gray-300 px-4 py-2">{{line.subtotal | currency}}</td>
+    </tr>
+    </tbody>
+  </table>
+  <div class="flex justify-between mt-6 items-center gap-2">
+    <!-- Select Input and Button -->
+    <div class="flex space-x-4">
+      <select [(ngModel)]="l10n_mx_edi_usage" class="px-4 py-2 border rounded-lg text-gray-700 max-w-xs">
+        <option [ngValue]="'0'" disabled>--Selecciona un uso CFDI--</option>
+        <option *ngFor="let reg of ediUse" [ngValue]="reg.id">{{reg.name}}</option>
+      </select>
+      <button class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700" (click)="TimbrarFactura()">
+        <span *ngIf="isWorking" class="fa fa-spinner fa-spin"></span>Facturar
+      </button>
     </div>
 
-  </footer>
+    <!-- Invoice Summary -->
+    <div class="w-1/2">
+      <table class="table-auto w-full">
+        <tr>
+          <td class="px-4 py-2 text-right">Impuesto:</td>
+          <td class="px-4 py-2 text-right">{{order.amount_tax | currency}}</td>
+        </tr>
+        <tr>
+          <td class="px-4 py-2 text-right">Total:</td>
+          <td class="px-4 py-2 text-right">{{order.amount_total | currency}}</td>
+        </tr>
+        <tr class="font-semibold">
+          <td class="px-4 py-2 text-right">Pagado:</td>
+          <td class="px-4 py-2 text-right">{{order.amount_paid | currency}}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
 </div>
+

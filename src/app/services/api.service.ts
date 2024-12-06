@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { GLOBAL } from "./global";
-import { Observable } from "rxjs";
+import {Observable, ObservedValueOf} from "rxjs";
+import {PointOfSale} from "../models/PointOfSale";
 
 const HTTP_HEADERS = {
   headers: new HttpHeaders({
@@ -29,5 +30,16 @@ export class ApiService {
     };
 
     return this.httpClient.post(this.url + "facturar", JSON.stringify(body), HTTP_HEADERS);
+  }
+
+  GetPointOfSales(company: number): Observable<any>{
+    let body = {
+      "params": {
+        "company": company
+      }
+    };
+
+    return this.httpClient.post(this.url + 'pos', JSON.stringify(body), HTTP_HEADERS);
+
   }
 }

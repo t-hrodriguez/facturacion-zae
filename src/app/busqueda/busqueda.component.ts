@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import {BusquedaService} from "../services/busqueda.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {GLOBAL} from "../services/global";
+import {PointOfSale} from "../models/PointOfSale";
+import {ApiService} from "../services/api.service";
 
 @Component({
   selector: 'app-busqueda',
@@ -11,20 +13,23 @@ import {GLOBAL} from "../services/global";
 export class BusquedaComponent implements OnInit {
 
   public tipoBusqueda = [
-    {id: "1", name: 'Orden de venta'},
-    {id: "2", name: 'Ticket'}
+    {id: "1", name: 'Ticket de venta'},
+    {id: "2", name: 'Nota de venta'}
   ]
 
   public rfc: string = '';
-  public pointOfSale: string = '';
+  public pointOfSale: number = 0;
   public gasparRef: string = '';
   public saleRef: string = '';
   public saleDate!: Date;
   private companyId!: number;
   public tipo: string = "0";
+  public pointOfSales!: Array<any>;
+  public showPOS: boolean = false;
 
   constructor(
     private busquedaService: BusquedaService,
+    private apiService: ApiService,
     private router: Router,
     private aRoute: ActivatedRoute) { }
 
@@ -37,6 +42,21 @@ export class BusquedaComponent implements OnInit {
       error: err => {
         this.router.navigate(['/'])
       }});
+    this.apiService.GetPointOfSales(this.companyId).subscribe({next: (value) => {
+        this.pointOfSales = value.result;
+      },
+      error: (error) => {
+        alert('No se pudo obtener la lista de punto de ventas')
+      }
+    });
+  }
+
+  onShowPos(){
+    if(this.tipo == '2')
+      this.showPOS = true;
+    else
+      this.showPOS = false;
+
   }
 
   SearchSaleOrder(){

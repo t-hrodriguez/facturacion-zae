@@ -42,6 +42,11 @@ export class OrderComponent implements OnInit {
   private companyId!: number;
   public l10n_mx_edi_usage: string = "0";
   public isWorking: boolean = false;
+  public mensaje: boolean = false;
+  public tipoAlert: string = 'error';
+  public mensajeText: string = '';
+
+  public mensajeHeader : string = '';
 
   constructor(
     private clienteService: ClienteService,
@@ -57,20 +62,20 @@ export class OrderComponent implements OnInit {
     this.order = JSON.parse(localStorage.getItem("order"));
     this.aRoute.queryParams.subscribe(params =>{
       console.log(params)
-      if (params['ciudad'])
+      if (params['ciudad']) {
         this.companyId = parseInt(params['ciudad'])
+        //@ts-ignore
+        this.clienteService.ObtenerCliente(localStorage.getItem("rfc"), this.companyId).subscribe({
+          next: (r) => {
+            if (r.result && r.result.id)
+              this.partnerId = r.result.id;
+            else
+              this.router.navigate(['cliente'], {queryParams: {ciudad: this.companyId}});
+          }
+        });
+      }
       else
         this.router.navigate(['/'])
-    });
-
-    // @ts-ignore
-    this.clienteService.ObtenerCliente(localStorage.getItem("rfc")).subscribe({
-      next: (r) => {
-        if (r.result && r.result.id)
-          this.partnerId = r.result.id;
-        else
-          this.router.navigate(['cliente'], {queryParams: {ciudad: this.companyId}});
-      }
     });
   }
 
@@ -85,13 +90,29 @@ export class OrderComponent implements OnInit {
       next: value => {
         if (value.result === "OK"){
           this.showButton = false;
-          this.isWorking = false;
-          alert("La factura se ha generado exitosamente y se ha enviado al correo registrado")
+          this.isWorking = false;;
+          this.mensaje = true;
+          this.mensajeHeader = 'Factura generada'
+          this.mensajeText = `La factura se ha generado exitosamente y se ha enviado al correo registrado`;
+          this.tipoAlert = 'success';
         }
         if (value.result && value.result.error){
-          alert(value.result.message);
+          if (value.result.message)
+            alert(value.result.message);
+          if (value.result.messages){
+            this.mensaje = true;
+            this.mensajeHeader = 'Error al timbrar'
+            for (let i of value.result.messages){
+              if (i){
+                // @ts-ignore
+                this.mensajeText = i;
+              }
+            }
+          }
+          this.isWorking = false;
         }
         if (value.error){
+          this.isWorking = false;
           alert("Ha ocurrido un error en el servidor y tu factura no pudo ser timbrada, si el problema persiste comunicate con soporte para obtener tu factura")
         }
       },
@@ -100,6 +121,7 @@ export class OrderComponent implements OnInit {
         alert("Error al generar factura ");
       }
     });
+
   }
 
 }

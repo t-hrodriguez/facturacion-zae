@@ -1,12 +1,11 @@
-<h1>FACTURACIÓN ELECTRÓNICA</h1>
-<hr>
-<p>Grupo Tomza</p>
-<p>¿De donde nos visitas?</p>
-<div class="dropdown">
-  <a> Selecciona </a>
-  <div class="dropdown-content">
-    <a routerLink="buscar" [queryParams]="{ciudad: '46'}"> Ciudad Juárez </a>
-    <a routerLink="buscar" [queryParams]="{ciudad: '31'}"> Hermosillo </a>
-    <a routerLink="buscar" [queryParams]="{ciudad: '47'}"> Acapulco </a>
-  </div>
+<div class="welcome">
+  <h1>FACTURACIÓN ELECTRÓNICA</h1>
+  <hr>
+  <p>Grupo Tomza</p>
+  <p>¿De donde nos visitas?</p>
+    <select id="soflow-color" [ngModel]="ciudad" class="city-select" name="ciudad" (ngModelChange)="onChangeCity($event)" >
+      <option [ngValue]="'0'"> Seleccionar </option>
+      <option *ngFor="let c of ciudades" [ngValue]="c.id" routerLink="buscar" [queryParams]="{ciudad: c.id}">
+        <a routerLink="buscar" [queryParams]="{ciudad: c.id}"> {{c.name}} </a></option>
+    </select>
 </div>

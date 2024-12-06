@@ -40,7 +40,7 @@ export class ClienteComponent implements OnInit {
   // public street_number?: number;
   // public l10n_mx_edi_colony?: string;
   public zip: string = "";
-  public vat: string;
+  public vat: string = "";
   public email: string = "";
   // TODO Agregar Régimen fiscal, no se encuentra en odoo, ¿porque? No se
   public l10n_mx_edi_fiscal_regime!: string;
@@ -68,20 +68,30 @@ export class ClienteComponent implements OnInit {
   }
 
   CreateCustomer() {
-    this.clienteService.CrearCliente(this.name, this.zip, this.vat, this.email, this.companyId, this.l10n_mx_edi_fiscal_regime).subscribe({
-        next: (r) => {
-          if (r.result && r.result.id){
-            this.router.navigate(['orden'])
+    if(this.isFormValid()){
+      this.clienteService.CrearCliente(this.name, this.zip, this.vat, this.email, this.companyId, this.l10n_mx_edi_fiscal_regime).subscribe({
+          next: (r) => {
+            if (r.result && r.result.id){
+              this.router.navigate(['orden'], {queryParams: {ciudad: this.companyId}})
+            }
+            if (r.result.error){
+              alert("Ha ocurrido un error en el servidor y tu factura no pudo ser timbrada, si el problema persiste comunicate con soporte para obtener tu factura")
+            }
+          },
+          error: (e) => {
+            // TODO handle error
           }
-          if (r.error){
-            alert("Ha ocurrido un error en el servidor y tu factura no pudo ser timbrada, si el problema persiste comunicate con soporte para obtener tu factura")
-          }
-        },
-        error: (e) => {
-          // TODO handle error
         }
-      }
-    );
+      );
+    }
+    else {
+      alert("Por favor llena todos los campos, no se permiten espacios vacíos");
+    }
+  }
+
+  isFormValid(): boolean {
+    return this.name?.trim().length > 10 && this.zip?.trim().length > 0 && this.vat?.trim().length > 11
+      && this.email?.trim().length > 0 && this.l10n_mx_edi_fiscal_regime?.trim() != '';
   }
 
 }

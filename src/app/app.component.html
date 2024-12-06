@@ -1,69 +1,17 @@
-<div class="go-top">
-  <span class="fas fa-angle-up"></span>
-</div>
-
-<header id="header">
-  <nav class="menu">
-    <div class="logo-box">
-      <h1><a routerLink="/"><IMG SRC="assets/img/llamita.png" Height=50 width=50></a></h1>
-      <span class="btn-menu"><i class="fas fa-bars"></i></span>
-    </div>
-
-    <div class="list-container">
-      <ul class="lists">
-        <li><a routerLink="/" class="active">Inicio</a></li>
-        <li><a href="#">Servicios</a></li>
-        <li><a href="#">Sucursales</a></li>
-        <li><a href="#">Contacto</a></li>
-      </ul>
-    </div>
-  </nav>
-
-</header>
-
-<!-- Imagen Header -->
-<div class="img-header">
-  <div class="welcome">
-    <router-outlet>
-      <!-- rest of your app omitted for brevity -->
-      <!-- <div>IDLE_STATE: {{idleState}}, COUNTDOWN: {{countdown}}</div> -->
-      <!-- rest of your app omitted for brevity -->
-    </router-outlet>
-  </div>
-</div>
-<div class="col-md-4">
-  <div class="newsletter">
-    <IMG SRC="assets/img/Logo-blanco-Gas-tomza.png" ALIGN=LEFT WIDTH=220 HEIGHT=150> <BR CLEAR>
-    <h4>GAS TOMZA M&Eacute;XICO</h4>
-    <p>Somos tus más grandes aliados en Gas LP, expertos desde hace más de 60 años en llevar energía hasta tu hogar,
-      tu negocio y a la industria.</p>
-    <div class="col-md-5">
-      <div class="contact-details">
-        <h4>Cont&aacute;ctanos</h4>
-        <li>
-          <p><i class="fa fa-phone"></i> <strong>Teléfono:</strong> 6100100 </p>
-        </li>
-        <li>
-          <p><i class="fa fa-envelope"></i> <strong>Email:</strong> <a
-            href="mailto: info@tomza.com">info@tomza.com</a></p>
-        </li>
-        <li>
-          <p><i class="fa-brands fa-facebook"></i> <strong> Facebook: </strong> <a
-            href="https://facebook.com/GRUPO-TOMZA">GRUPO TOMZA</a></p>
-        </li>
-
-      </div>
-    </div>
-    <div id="footer-3" class="col-md-3 col-sm-12 footer-column widget-area sidebar" role="complementary">
-    </div>
-    <div id="footer-4" class="col-md-3 col-sm-12 footer-column widget-area sidebar" role="complementary">
-    </div>
-    <div class="separator" style="clear: both; text-align: left;">
-    </div>
-    <div class="col-md-7">
-      <p>© 2020-2023 Gas Tomza México - Tus más grandes aliados en Gas LP </p>
+<!--</header>-->
+<div class="flex flex-col">
+  <app-navbar></app-navbar>
+  <!-- Imagen Header -->
+  <div class="img-background bg-gray-100 h-screen justify-center">
+    <div class="mt-8">
+      <router-outlet>
+        <!-- rest of your app omitted for brevity -->
+        <!-- <div>IDLE_STATE: {{idleState}}, COUNTDOWN: {{countdown}}</div> -->
+        <!-- rest of your app omitted for brevity -->
+      </router-outlet>
     </div>
   </div>
+  <app-footer></app-footer>
 </div>
 
 
