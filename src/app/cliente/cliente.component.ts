@@ -42,10 +42,11 @@ export class ClienteComponent implements OnInit {
   public zip: string = "";
   public vat: string = "";
   public email: string = "";
+  public order_id: number = 0;
   // TODO Agregar Régimen fiscal, no se encuentra en odoo, ¿porque? No se
   public l10n_mx_edi_fiscal_regime!: string;
   private companyId!: number;
-
+  public order: any;
   constructor(
     private clienteService: ClienteService,
     private router: Router,
@@ -61,6 +62,7 @@ export class ClienteComponent implements OnInit {
         if(params['ciudad'])
           console.log(params['ciudad'])
           this.companyId = parseInt(params['ciudad']);
+          this.order_id = parseInt(params['order_id']);
       },
       error: err => {
         this.router.navigate(['/'])
@@ -69,13 +71,24 @@ export class ClienteComponent implements OnInit {
 
   CreateCustomer() {
     if(this.isFormValid()){
-      this.clienteService.CrearCliente(this.name, this.zip, this.vat, this.email, this.companyId, this.l10n_mx_edi_fiscal_regime).subscribe({
+      console.log(this.order_id)
+      this.clienteService.CrearCliente(this.name, this.zip, this.vat, this.email, this.companyId, this.l10n_mx_edi_fiscal_regime, this.order_id).subscribe({
           next: (r) => {
             if (r.result && r.result.id){
+              // @ts-ignore
+              // update order with partner id
+              this.order = JSON.parse(localStorage.getItem("order"));
+              this.order.partner = {
+                id: r.result.id,
+                name: this.name,
+                rfc: this.vat
+              }
+              localStorage.setItem("order", JSON.stringify(this.order));
+
               this.router.navigate(['orden'], {queryParams: {ciudad: this.companyId}})
             }
             if (r.result.error){
-              alert("Ha ocurrido un error en el servidor y tu factura no pudo ser timbrada, si el problema persiste comunicate con soporte para obtener tu factura")
+              alert("Ha ocurrido un error en el servidor y no se ha podido crear el cliente")
             }
           },
           error: (e) => {

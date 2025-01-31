@@ -73,16 +73,22 @@ export class BusquedaComponent implements OnInit {
           alert("Esta orden de venta no puede ser facturada debido a que ha sido reembolsada")
         else{
           let order = r.result[0];
-          if (order.partner.rfc === "" || order.partner.rfc === GLOBAL.rfc || order.partner.rfc === this.rfc){
-
+          if (order.partner.rfc === this.rfc){
+            localStorage.setItem("order", JSON.stringify(order));
+            localStorage.setItem("rfc", this.rfc)
+            this.router.navigate(['orden'], {queryParams: {ciudad: this.companyId}})
           }
           else {
-            alert("Esta orden no puede ser facturada ya que está asignada a un cliente distinto");
-            return;
+            if (order.partner.rfc === GLOBAL.rfc) {
+              localStorage.setItem("order", JSON.stringify(order));
+              localStorage.setItem("rfc", this.rfc)
+              this.router.navigate(['cliente'], {queryParams: {ciudad: this.companyId, order_id: order.id}});
+            } else {
+              alert("Esta orden no puede ser facturada ya que está asignada a un cliente distinto");
+              return;
+            }
           }
-          localStorage.setItem("order", JSON.stringify(order));
-          localStorage.setItem("rfc", this.rfc);
-          this.router.navigate(['orden'], {queryParams: {ciudad: this.companyId}})
+
         }
       },
       error: (e) => {

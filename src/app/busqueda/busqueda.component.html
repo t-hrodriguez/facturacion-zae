@@ -11,9 +11,8 @@
     <div class="mb-4">
       <label class="form-label" for="search_by">Buscar por:</label>
       <select [(ngModel)]="tipo" name="tipo" id="search_by" class="form-control"
-              aria-label="Small" aria-describedby="inputGroup-sizing-sm"
-              required="" (change)="onShowPos()">
-        <option [ngValue]="'0'">Selecciona una opción</option>
+              required="">
+        <option value="0" selected>Selecciona una opción</option>
         <option *ngFor="let tip of tipoBusqueda" [ngValue]="tip.id">{{ tip.name }}</option>
       </select>
     </div>
@@ -21,7 +20,7 @@
       <label class="form-label" for="pos">Punto de venta:</label>
       <select [(ngModel)]="pointOfSale" name="tipo" id="pos" class="form-control"
               aria-label="Small" aria-describedby="inputGroup-sizing-sm"
-              required="" (change)="onShowPos()">
+              required="">
         <option [ngValue]="'0'">Selecciona una opción</option>
         <option *ngFor="let pos of pointOfSales" [ngValue]="pos.id">{{ pos.name }}</option>
       </select>

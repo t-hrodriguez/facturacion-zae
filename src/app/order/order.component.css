@@ -48,6 +48,12 @@ tr:nth-child(even) {
   color: #146c43;
 }
 
+.info {
+  background-color: #d1ecf1;
+  border: 1px solid #a4d6da;
+  color: #0c5460;
+}
+
 .error-header {
   text-align: left;
 }

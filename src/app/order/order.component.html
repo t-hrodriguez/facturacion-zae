@@ -5,6 +5,10 @@
       {{mensajeText}}
     </div>
   </div>
+
+  <div class="mensaje info" *ngIf="isWorking">
+    <h3 class="error-header flex items-center gap-2">Facturando <i class="fa-solid fa-circle-notch animate-spin"></i></h3>
+  </div>
   <h1 class="text-2xl font-bold mb-4">Tu orden de compra</h1>
 
   <div class="mb-6 datos">
@@ -19,13 +23,13 @@
     <span>{{order.config_id}}</span>
 
     <label class="text-gray-700">Fecha de venta:</label>
-    <span>{{order.date_order}}</span>
+    <span>{{substractOffsetTime(order.date_order)}}</span>
 
     <label class="text-gray-700">Referencia de venta:</label>
     <span>{{order.pos_reference}}</span>
 
-    <label class="text-gray-700">Nota:</label>
-    <span>{{order.note}}</span>
+    <label class="text-gray-700">Nota gaspar:</label>
+    <span>{{order.note != false ? order.note : ''}}</span>
   </div>
 
   <table class="min-w-full border-collapse border border-gray-300">
@@ -53,8 +57,8 @@
         <option [ngValue]="'0'" disabled>--Selecciona un uso CFDI--</option>
         <option *ngFor="let reg of ediUse" [ngValue]="reg.id">{{reg.name}}</option>
       </select>
-      <button class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700" (click)="TimbrarFactura()">
-        <span *ngIf="isWorking" class="fa fa-spinner fa-spin"></span>Facturar
+      <button [disabled]="isWorking" class="px-6 py-2 bg-blue-600 text-white flex items-center gap-4 rounded-lg hover:bg-blue-700 disabled:hover:bg-blue-600 disabled:opacity-50" (click)="TimbrarFactura()">
+        Facturar
       </button>
     </div>
 

@@ -45,6 +45,7 @@ export class OrderComponent implements OnInit {
   public mensaje: boolean = false;
   public tipoAlert: string = 'error';
   public mensajeText: string = '';
+  public isLoading: boolean = false;
 
   public mensajeHeader : string = '';
 
@@ -58,19 +59,20 @@ export class OrderComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
     // @ts-ignore
     this.order = JSON.parse(localStorage.getItem("order"));
+    console.log(this.order)
     this.aRoute.queryParams.subscribe(params =>{
-      console.log(params)
       if (params['ciudad']) {
         this.companyId = parseInt(params['ciudad'])
         //@ts-ignore
         this.clienteService.ObtenerCliente(localStorage.getItem("rfc"), this.companyId).subscribe({
           next: (r) => {
-            if (r.result && r.result.id)
+            if (r.result && r.result.id){
               this.partnerId = r.result.id;
-            else
-              this.router.navigate(['cliente'], {queryParams: {ciudad: this.companyId}});
+            } else
+              this.router.navigate(['cliente'], {queryParams: {ciudad: this.companyId, order_id: this.order.id} });
           }
         });
       }
@@ -79,18 +81,35 @@ export class OrderComponent implements OnInit {
     });
   }
 
+  substractOffsetTime(date: string): string {
+    // get time offset and substract it from the date
+    const hoursOffset: number = new Date().getTimezoneOffset() / 60;
+    let dateTyped = new Date(date);
+    dateTyped.setHours(dateTyped.getHours() - hoursOffset);
+
+    const day = dateTyped.getDate() < 10 ? `0${dateTyped.getDate()}` : dateTyped.getDate();
+    const month = dateTyped.getMonth() + 1 < 10 ? `0${dateTyped.getMonth() + 1}` : dateTyped.getMonth() + 1;
+
+    const hours = dateTyped.getHours() < 10 ? `0${dateTyped.getHours()}` : dateTyped.getHours();
+    const minutes = dateTyped.getMinutes() < 10 ? `0${dateTyped.getMinutes()}` : dateTyped.getMinutes();
+    const seconds = dateTyped.getSeconds() < 10 ? `0${dateTyped.getSeconds()}` : dateTyped.getSeconds();
+
+    return `${day}-${month}-${dateTyped.getFullYear()} ${hours}:${minutes}:${seconds}`;
+  }
+
   TimbrarFactura(){
     this.isWorking = true;
     if (this.l10n_mx_edi_usage == '0'){
       alert('Debes seleccionar un uso de CFDI para continuar');
       this.isWorking = false;
+      this.isLoading = false;
       return;
     }
     this.apiService.TimbrarFactura(this.order.id, this.partnerId, this.l10n_mx_edi_usage).subscribe({
       next: value => {
         if (value.result === "OK"){
           this.showButton = false;
-          this.isWorking = false;;
+          this.isWorking = false;
           this.mensaje = true;
           this.mensajeHeader = 'Factura generada'
           this.mensajeText = `La factura se ha generado exitosamente y se ha enviado al correo registrado`;
@@ -99,9 +118,11 @@ export class OrderComponent implements OnInit {
         if (value.result && value.result.error){
           if (value.result.message)
             alert(value.result.message);
+            this.isWorking = false;
           if (value.result.messages){
             this.mensaje = true;
             this.mensajeHeader = 'Error al timbrar'
+            this.isWorking = false;
             for (let i of value.result.messages){
               if (i){
                 // @ts-ignore
@@ -119,6 +140,7 @@ export class OrderComponent implements OnInit {
       error: err => {
         // TODO handle error
         alert("Error al generar factura ");
+        this.isWorking = false;
       }
     });
 
