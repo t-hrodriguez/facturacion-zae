@@ -88,7 +88,7 @@ export class ClienteComponent implements OnInit {
               this.router.navigate(['orden'], {queryParams: {ciudad: this.companyId}})
             }
             if (r.result.error){
-              alert("Ha ocurrido un error en el servidor y no se ha podido crear el cliente")
+              alert("Ha ocurrido un error en el servidor y no se ha podido crear el cliente: " + r.result?.message);
             }
           },
           error: (e) => {
@@ -103,7 +103,7 @@ export class ClienteComponent implements OnInit {
   }
 
   isFormValid(): boolean {
-    return this.name?.trim().length > 10 && this.zip?.trim().length > 0 && this.vat?.trim().length > 11
+    return this.name?.trim().length > 1 && this.zip?.trim().length > 0 && this.vat?.trim().length > 11
       && this.email?.trim().length > 0 && this.l10n_mx_edi_fiscal_regime?.trim() != '';
   }
 

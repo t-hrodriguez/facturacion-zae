@@ -53,13 +53,12 @@ export class OrderComponent implements OnInit {
     private clienteService: ClienteService,
     private apiService: ApiService,
     private router: Router,
-    private aRoute: ActivatedRoute
+    private aRoute: ActivatedRoute,
   ) {
 
   }
 
   ngOnInit(): void {
-
     // @ts-ignore
     this.order = JSON.parse(localStorage.getItem("order"));
     console.log(this.order)

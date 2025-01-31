@@ -1,17 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import {BusquedaService} from "../services/busqueda.service";
+import { ClienteService } from '../services/cliente.service';
 import {ActivatedRoute, Router} from "@angular/router";
 import {GLOBAL} from "../services/global";
 import {PointOfSale} from "../models/PointOfSale";
 import {ApiService} from "../services/api.service";
 
 @Component({
-  selector: 'app-busqueda',
-  templateUrl: './busqueda.component.html',
-  styleUrls: ['./busqueda.component.css']
+  selector: 'app-buscar',
+  templateUrl: './buscar.component.html',
+  styleUrls: ['./buscar.component.css']
 })
-export class BusquedaComponent implements OnInit {
-
+export class BuscarComponent implements OnInit {
   public tipoBusqueda = [
     {id: "1", name: 'Ticket de venta'},
     {id: "2", name: 'Nota de venta'}
@@ -31,7 +31,9 @@ export class BusquedaComponent implements OnInit {
     private busquedaService: BusquedaService,
     private apiService: ApiService,
     private router: Router,
-    private aRoute: ActivatedRoute) { }
+    private aRoute: ActivatedRoute,
+    private clienteService: ClienteService
+  ) { }
 
   ngOnInit(): void {
     this.aRoute.queryParams.subscribe({
@@ -51,14 +53,6 @@ export class BusquedaComponent implements OnInit {
     });
   }
 
-  onShowPos(){
-    if(this.tipo == '2')
-      this.showPOS = true;
-    else
-      this.showPOS = false;
-
-  }
-
   SearchSaleOrder(){
     if (this.tipo == "0"){
       alert('Selecciona un valor para "Buscar por"');
@@ -74,15 +68,41 @@ export class BusquedaComponent implements OnInit {
         else{
           let order = r.result[0];
           if (order.partner.rfc === this.rfc){
+            console.log('mismo rfc')
             localStorage.setItem("order", JSON.stringify(order));
             localStorage.setItem("rfc", this.rfc)
             this.router.navigate(['orden'], {queryParams: {ciudad: this.companyId}})
           }
           else {
             if (order.partner.rfc === GLOBAL.rfc) {
-              localStorage.setItem("order", JSON.stringify(order));
-              localStorage.setItem("rfc", this.rfc)
-              this.router.navigate(['cliente'], {queryParams: {ciudad: this.companyId, order_id: order.id}});
+              this.clienteService.ObtenerCliente(this.rfc, this.companyId).subscribe({
+                next: (r) => {
+                  if (r.result && r.result.id){
+                    this.clienteService.CambiarClienteOrden(order.id, r.result.id).subscribe({
+                      next: (r) => {
+                        if (r.result && !r.result.error) {
+                          localStorage.setItem("order", JSON.stringify(r.result?.order));
+                          localStorage.setItem("rfc", this.rfc)
+                          this.router.navigate(['orden'], {queryParams: {ciudad: this.companyId}})
+                        } else {
+                          alert("Ha ocurrido un error al cambiar el cliente de la orden: " + r.result?.message);
+                        }
+                      }, error: (e) => {
+                        console.log(e)
+                      }
+                    });
+                  } else {
+                    localStorage.setItem("order", JSON.stringify(order));
+                    localStorage.setItem("rfc", this.rfc)
+                    this.router.navigate(['cliente'], {queryParams: {ciudad: this.companyId, order_id: order.id}});
+                  }
+                }, error: (e) => {
+                  console.log(e)
+                }
+              });
+              // console.log(clientExists)
+
+              
             } else {
               alert("Esta orden no puede ser facturada ya que está asignada a un cliente distinto");
               return;
@@ -96,5 +116,4 @@ export class BusquedaComponent implements OnInit {
       }
     });
   }
-
 }

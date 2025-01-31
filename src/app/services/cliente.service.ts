@@ -29,6 +29,16 @@ export class ClienteService {
     return this.httpClient.post(this.url + "cliente", JSON.stringify(body), HTTP_HEADERS);
   }
 
+  CambiarClienteOrden(orderId: number, partnerId: number): Observable<any>{
+    let body = {
+      "params": {
+        "order_id": orderId,
+        "partner_id": partnerId
+      }
+    };
+    return this.httpClient.post(this.url + "cliente/changeorder", JSON.stringify(body), HTTP_HEADERS);
+  }
+
   CrearCliente(name: string, zip: string, vat: string, email: string, companyId: number, l10n_mx_edi_fiscal_regime: string, orderId: number): Observable<any>{
     let body = {
       "params": {

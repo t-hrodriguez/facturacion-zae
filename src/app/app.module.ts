@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
-import { BusquedaComponent } from './busqueda/busqueda.component';
+// import { BusquedaComponent } from './busqueda/busqueda.component';
+import { BuscarComponent } from './buscar/buscar.component';
 import { HomeComponent } from './home/home.component';
 import {AppRoutingModule} from "./app-routing.modile";
 import {FormsModule} from "@angular/forms";
@@ -17,14 +18,14 @@ import { FooterComponent } from './components/footer/footer.component';
 @NgModule({
   declarations: [
     AppComponent,
-    BusquedaComponent,
     HomeComponent,
     OrderComponent,
     ClienteComponent,
     BranchesComponent,
     ServicesComponent,
     NavbarComponent,
-    FooterComponent
+    FooterComponent,
+    BuscarComponent
   ],
   imports: [
     BrowserModule,
