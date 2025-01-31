@@ -25,12 +25,20 @@
       <select [(ngModel)]="l10n_mx_edi_fiscal_regime" name="fiscal_regime" id="fiscal_regime" class="form-control"
               aria-label="Small" aria-describedby="inputGroup-sizing-sm"
               required>
-        <option [ngValue]="''" disabled>Selecciona un Régimen Fiscal</option>
+        <option [ngValue]="'0'" disabled>Selecciona un Régimen Fiscal</option>
         <option *ngFor="let fr of fiscalRegimes" [ngValue]="fr.id">{{ fr.name }}</option>
       </select>
     </div>
 
-  <button class="bg-red-zae text-white py-2 px-4 rounded hover:bg-red-900 transition duration-200" type="submit">Guardar</button>
+    <div class="w-full flex justify-center py-3">
+      <button
+        [disabled]="isLoading"
+        class="bg-red-zae text-white flex items-center justify-center gap-4 mx-auto py-2 px-4 rounded disabled:opacity-75 disabled:hover:bg-[#cc2128] hover:bg-red-900 transition duration-200"
+        type="submit"
+      >
+        Regístrate <span *ngIf="isLoading"><i class="fa-solid fa-circle-notch animate-spin"></i></span>
+      </button>
+    </div>
   </form>
 </div>
 

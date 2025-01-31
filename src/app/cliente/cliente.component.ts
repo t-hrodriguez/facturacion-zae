@@ -47,6 +47,8 @@ export class ClienteComponent implements OnInit {
   public l10n_mx_edi_fiscal_regime!: string;
   private companyId!: number;
   public order: any;
+  isLoading = false;
+
   constructor(
     private clienteService: ClienteService,
     private router: Router,
@@ -70,10 +72,11 @@ export class ClienteComponent implements OnInit {
   }
 
   CreateCustomer() {
+    this.isLoading = true;
     if(this.isFormValid()){
-      console.log(this.order_id)
       this.clienteService.CrearCliente(this.name, this.zip, this.vat, this.email, this.companyId, this.l10n_mx_edi_fiscal_regime, this.order_id).subscribe({
           next: (r) => {
+            this.isLoading = false;
             if (r.result && r.result.id){
               // @ts-ignore
               // update order with partner id
@@ -92,12 +95,14 @@ export class ClienteComponent implements OnInit {
             }
           },
           error: (e) => {
+            this.isLoading = false;
             // TODO handle error
           }
         }
       );
     }
     else {
+      this.isLoading = false;
       alert("Por favor llena todos los campos, no se permiten espacios vacíos");
     }
   }

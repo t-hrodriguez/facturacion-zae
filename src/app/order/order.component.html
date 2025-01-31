@@ -57,7 +57,7 @@
         <option [ngValue]="'0'" disabled>--Selecciona un uso CFDI--</option>
         <option *ngFor="let reg of ediUse" [ngValue]="reg.id">{{reg.name}}</option>
       </select>
-      <button [disabled]="isWorking" class="px-6 py-2 bg-blue-600 text-white flex items-center gap-4 rounded-lg hover:bg-blue-700 disabled:hover:bg-blue-600 disabled:opacity-50" (click)="TimbrarFactura()">
+      <button [disabled]="isWorking" class="px-6 py-2 bg-[#cc2128] text-white flex items-center gap-4 rounded-lg hover:bg-red-900 disabled:hover:bg-[#cc2128] disabled:opacity-50" (click)="TimbrarFactura()">
         Facturar
       </button>
     </div>

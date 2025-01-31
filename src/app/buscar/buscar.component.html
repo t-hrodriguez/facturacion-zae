@@ -37,83 +37,14 @@
              type="date" name="fechaesperada" data-val-requires="Date is required" required>
     </div>
 
-  <button class="bg-red-zae text-white py-2 px-4 rounded hover:bg-red-900 transition duration-200" type="submit">Buscar</button>
+    <div class="w-full flex justify-center py-3">
+      <button 
+        [disabled]="isLoading"
+        class="bg-red-zae text-white flex items-center justify-center gap-4 mx-auto py-2 px-4 rounded disabled:opacity-75 disabled:hover:bg-[#cc2128] hover:bg-red-900 transition duration-200" 
+        type="submit"
+      >
+        Buscar <span *ngIf="isLoading"><i class="fa-solid fa-circle-notch animate-spin"></i></span>
+      </button>
+    </div>
   </form>
 </div>
-<!--<div class="welcome">-->
-<!--  <br>-->
-<!--  <br>-->
-<!--  <br>-->
-<!--  <div class="wrapper">-->
-<!--    <div class="imagen">-->
-<!--      <IMG SRC="assets/img/llamita.png" WIDTH=40 HEIGHT=40>-->
-<!--    </div>-->
-<!--    <div class="title-text">-->
-<!--      <div class="title">-->
-<!--        Buscar Nota-->
-<!--      </div>-->
-<!--    </div>-->
-<!--    <a> Llenar los recuadros con los datos correspondientes</a>-->
-<!--    <br>-->
-<!--    <br>-->
-<!--    <div class="form-inner">-->
-<!--      <form #loginForm="ngForm" (ngSubmit)="SearchSaleOrder()" ngNativeValidate class="RFC">-->
-<!--        <span class="input-group-text" id="Span5">RFC:</span>-->
-<!--        <input [(ngModel)]="rfc" name="rfc" type="text" id="Header_TB_NumRfc" class="form-control"-->
-<!--               aria-label="Small" aria-describedby="inputGroup-sizing-sm" placeholder="Ingresa R.F.C."-->
-<!--               required="" style="text-transform: uppercase;"/>-->
-<!--        <pre id="resultado"></pre>-->
-<!--        <span id="Header_LB_Messag" style="color:#CC2128;font-size:6pt;"></span>-->
-
-<!--        <div class="input-group input-group-sm mb-3">-->
-<!--          <div class="input-group-prepend">-->
-<!--            <span class="input-group-text" id="Span2">Buscar por:</span>-->
-<!--          </div>-->
-<!--          <select [(ngModel)]="tipo" name="tipo" id="Header_TB_NumTic2" class="form-control"-->
-<!--                  aria-label="Small" aria-describedby="inputGroup-sizing-sm" placeholder="Ingresa Número"-->
-<!--                  required="" (change)="onShowPos()">-->
-<!--            <option [ngValue]="'0'">Selecciona una opción</option>-->
-<!--            <option *ngFor="let tip of tipoBusqueda" [ngValue]="tip.id">{{ tip.name }}</option>-->
-<!--          </select>-->
-<!--        </div>-->
-
-<!--        <div class="input-group input-group-sm mb-3">-->
-<!--          <div class="input-group-prepend">-->
-<!--            <span class="input-group-text" id="Span1">Número:</span>-->
-<!--          </div>-->
-<!--          <input [(ngModel)]="saleRef" name="orden" type="text" id="Header_TB_NumTic" class="form-control"-->
-<!--                 aria-label="Small" aria-describedby="inputGroup-sizing-sm" placeholder="Ingresa Número"-->
-<!--                 required=""/>-->
-<!--        </div>-->
-
-<!--        <div class="input-group input-group-sm mb-3" *ngIf="showPOS">-->
-<!--          <div class="input-group-prepend">-->
-<!--            <span class="input-group-text" id="Span4">Punto Venta:</span>-->
-<!--          </div>-->
-<!--          <select [(ngModel)]="pointOfSale" name="pos"-->
-<!--                  type="text" placeholder="Punto de venta" class="form-control">-->
-<!--            <option [ngValue]="0">Selecciona un punto de venta</option>-->
-<!--            <option *ngFor="let pos of pointOfSales" [ngValue]="pos.id">{{ pos.name }}</option>-->
-<!--          </select>-->
-<!--        </div>-->
-
-<!--        <div class="input-group input-group-sm mb-3">-->
-<!--          <div class="input-group-prepend">-->
-<!--            <span class="input-group-text" id="Span3">Fecha Venta:</span>-->
-<!--          </div>-->
-<!--          <input [(ngModel)]="saleDate" name="fecha"-->
-<!--                 type="date" name="fechaesperada" data-val-requires="Date is required" required>-->
-<!--          &lt;!&ndash;  <input name="ctl00$Header$TB_FecRec" type="text" id="Header_TB_FecRec" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" placeholder="Fecha del recibo" data-val-required="Date is required" required="" />&ndash;&gt;-->
-<!--        </div>-->
-
-<!--        <br>-->
-
-<!--        <div class="buscar" align="center">-->
-<!--          <div class="btn-layer"></div>-->
-<!--          <button id="buscar" type="submit" value="buscar"> Buscar</button>-->
-<!--        </div>-->
-<!--      </form>-->
-<!--    </div>-->
-<!--  </div>-->
-
-<!--</div>-->
