@@ -3,12 +3,25 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {GLOBAL} from "./global";
 import {observableToBeFn} from "rxjs/internal/testing/TestScheduler";
 import {Observable} from "rxjs";
+import { TijuanaOffset, CiudadJuarezOffset, HermosilloOffset, AcapulcoOffset } from '../utils';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BusquedaService {
   private url: string;
+
+  timesMap: { [key: string]: number } = {
+    '113': TijuanaOffset,
+    '50': CiudadJuarezOffset,
+    '46': HermosilloOffset,
+    '31': AcapulcoOffset
+  }
+
+  // {'id': '113', 'name': 'Tijuana'},
+  //   {'id': '50', 'name': 'Acapulco'},
+  //   {'id': '46', 'name': 'Ciudad Juárez'},
+  //   {'id': '31', 'name': 'Hermosillo'}
 
   constructor(private httpClient: HttpClient) {
     this.url = GLOBAL.url;
@@ -26,9 +39,10 @@ export class BusquedaService {
     })
     let body = {
       "params": {
-        "args":
-          args,
-        "date": date
+          "args":
+            args,
+          "date": date,
+          "utc_diff": this.timesMap[companyId.toString()] || 0
         }
     };
     return this.httpClient.post(this.url + "buscar", JSON.stringify(body), {headers});

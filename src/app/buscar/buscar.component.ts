@@ -3,8 +3,10 @@ import {BusquedaService} from "../services/busqueda.service";
 import { ClienteService } from '../services/cliente.service';
 import {ActivatedRoute, Router} from "@angular/router";
 import {GLOBAL} from "../services/global";
-import {PointOfSale} from "../models/PointOfSale";
 import {ApiService} from "../services/api.service";
+import { InfoModalComponent } from './info-modal/info-modal.component';
+import { MatDialog } from '@angular/material/dialog';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-buscar',
@@ -28,15 +30,31 @@ export class BuscarComponent implements OnInit {
   public showPOS: boolean = false;
   isLoading = false;
 
+  dataSearchBy = [
+    { 
+      title: 'Ticket de venta',
+      description: 'Este es el número de orden que se encuentra en la parte inferior de tu ticket de venta',
+      image: `<img class="w-1/2" src="assets/img/1tomza.png" alt="Ticket de venta">`
+    },
+    { 
+      title: 'Nota de venta',
+      description: 'Este es el número de orden que se encuentra en la parte inferior de tu nota de venta',
+      image: `<img class="w-1/2" src="assets/img/1tomza2.png" alt="Nota de venta">`
+    }
+  ]
+
   constructor(
     private busquedaService: BusquedaService,
     private apiService: ApiService,
     private router: Router,
     private aRoute: ActivatedRoute,
-    private clienteService: ClienteService
+    private clienteService: ClienteService,
+    public dialog: MatDialog,
+    private toastr: ToastrService
   ) { }
 
   ngOnInit(): void {
+    // this.openDialog();
     this.aRoute.queryParams.subscribe({
       next: params => {
         if(params['ciudad'])
@@ -49,14 +67,26 @@ export class BuscarComponent implements OnInit {
         this.pointOfSales = value.result;
       },
       error: (error) => {
-        alert('No se pudo obtener la lista de punto de ventas')
+        console.log(error);
+        this.toastr.error('Ha ocurrido un error al obtener los puntos de venta, por favor reintenta en unos minutos', 'Error');
       }
+    });
+  }
+
+  openDialog(data: {title:string, description: string, image: string}[]): void {
+    const dialogRef = this.dialog.open(InfoModalComponent, {
+      width: '450px',
+      data: data
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
     });
   }
 
   SearchSaleOrder(){
     if (this.tipo == "0"){
-      alert('Selecciona un valor para "Buscar por"');
+      this.toastr.warning('Selecciona un valor para "Buscar por"', 'Campo requerido');
       return;
     }
     this.isLoading = true;
@@ -65,11 +95,13 @@ export class BuscarComponent implements OnInit {
         this.isLoading = false;
         if (r.result && r.result.length == 0){
           this.isLoading = false;
-          alert("No se han encontrado ninguna orden de venta");
+          // alert("No se han encontrado ninguna orden de venta");
+          this.toastr.error('No se ha encontrado ninguna orden de venta', 'Error');
         }
         else if (r.result && r.result.length > 1){
           this.isLoading = false;
-          alert("Esta orden de venta no puede ser facturada debido a que ha sido reembolsada")
+          // alert("Esta orden de venta no puede ser facturada debido a que ha sido reembolsada")
+          this.toastr.warning('Esta orden de venta no puede ser facturada debido a que ha sido reembolsada', 'Advertencia');
         }
         else{
           let order = r.result[0];
@@ -92,7 +124,8 @@ export class BuscarComponent implements OnInit {
                           this.router.navigate(['orden'], {queryParams: {ciudad: this.companyId}})
                         } else {
                           this.isLoading = false;
-                          alert("Ha ocurrido un error al cambiar el cliente de la orden: " + r.result?.message);
+                          // alert("Ha ocurrido un error al cambiar el cliente de la orden: " + r.result?.message);
+                          this.toastr.error('Ha ocurrido un error al cambiar el cliente de la orden: ' + r.result?.message, 'Error');
                         }
                       }, error: (e) => {
                         this.isLoading = false;
@@ -108,6 +141,7 @@ export class BuscarComponent implements OnInit {
                 }, error: (e) => {
                   this.isLoading = false;
                   console.log(e)
+                  this.toastr.error('Ha ocurrido un error al obtener los datos del cliente', 'Error');
                 }
               });
               // console.log(clientExists)
@@ -115,7 +149,8 @@ export class BuscarComponent implements OnInit {
               
             } else {
               this.isLoading = false;
-              alert("Esta orden no puede ser facturada ya que está asignada a un cliente distinto");
+              // alert("Esta orden no puede ser facturada ya que está asignada a un cliente distinto");
+              this.toastr.warning('Esta orden no puede ser facturada ya que está asignada a un cliente distinto', 'Advertencia');
               return;
             }
           }
@@ -125,7 +160,8 @@ export class BuscarComponent implements OnInit {
       },
       error: (e) => {
         this.isLoading = false;
-        alert('')
+        // alert('')
+        this.toastr.error('Ha ocurrido un error con el servicio al buscar la orden de venta', 'Error');
       }
     });
   }

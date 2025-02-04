@@ -14,6 +14,11 @@ import { BranchesComponent } from './branches/branches.component';
 import { ServicesComponent } from './services/services.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { InfoModalComponent } from './buscar/info-modal/info-modal.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ResponseModalComponent } from './order/response-modal/response-modal.component';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [
@@ -25,15 +30,21 @@ import { FooterComponent } from './components/footer/footer.component';
     ServicesComponent,
     NavbarComponent,
     FooterComponent,
-    BuscarComponent
+    BuscarComponent,
+    InfoModalComponent,
+    ResponseModalComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    MatDialogModule,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot()
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [InfoModalComponent],
 })
 export class AppModule { }

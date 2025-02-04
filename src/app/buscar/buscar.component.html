@@ -9,7 +9,7 @@
       <input [(ngModel)]="rfc" name="rfc" type="text" id="rfc" class="form-control" placeholder="Ingresa R.F.C." required>
     </div>
     <div class="mb-4">
-      <label class="form-label" for="search_by">Buscar por:</label>
+      <label class="form-label flex gap-2 items-center" for="search_by">Buscar por: <span><i (click)="openDialog(dataSearchBy)" class="fa-solid fa-circle-info hover:cursor-pointer"></i></span></label>
       <select [(ngModel)]="tipo" name="tipo" id="search_by" class="form-control"
               required="">
         <option value="0" selected>Selecciona una opción</option>

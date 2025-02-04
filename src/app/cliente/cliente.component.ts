@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ClienteService} from "../services/cliente.service";
 import {ActivatedRoute, Router} from "@angular/router";
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-cliente',
@@ -52,7 +53,8 @@ export class ClienteComponent implements OnInit {
   constructor(
     private clienteService: ClienteService,
     private router: Router,
-    private aRoute: ActivatedRoute
+    private aRoute: ActivatedRoute,
+    private toastr: ToastrService
   ) {
     // @ts-ignore
     this.vat = localStorage.getItem("rfc");
@@ -91,19 +93,22 @@ export class ClienteComponent implements OnInit {
               this.router.navigate(['orden'], {queryParams: {ciudad: this.companyId}})
             }
             if (r.result.error){
-              alert("Ha ocurrido un error en el servidor y no se ha podido crear el cliente: " + r.result?.message);
+              // alert("Ha ocurrido un error en el servidor y no se ha podido crear el cliente: " + r.result?.message);
+              this.toastr.error('Ha ocurrido un error en el servidor y no se ha podido crear el cliente: ' + r.result?.message, 'Error');
             }
           },
           error: (e) => {
             this.isLoading = false;
             // TODO handle error
+            this.toastr.error('Ha ocurrido un error en el servidor y no se ha podido crear el cliente', 'Error');
           }
         }
       );
     }
     else {
       this.isLoading = false;
-      alert("Por favor llena todos los campos, no se permiten espacios vacíos");
+      // alert("Por favor llena todos los campos, no se permiten espacios vacíos");
+      this.toastr.warning('Por favor llena todos los campos, no se permiten espacios vacíos', 'Advertencia');
     }
   }
 

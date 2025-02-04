@@ -2,6 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import {ClienteService} from "../services/cliente.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ApiService} from "../services/api.service";
+import { ResponseModalComponent } from './response-modal/response-modal.component';
+import { MatDialog } from '@angular/material/dialog';
+import Swal from 'sweetalert2';
+// import { TijuanaOffset, CiudadJuarezOffset, HermosilloOffset, AcapulcoOffset } from '../utils';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-order',
@@ -54,14 +59,23 @@ export class OrderComponent implements OnInit {
     private apiService: ApiService,
     private router: Router,
     private aRoute: ActivatedRoute,
+    public dialog: MatDialog,
+    private toastr: ToastrService
   ) {
 
   }
 
   ngOnInit(): void {
+    // console.log('tijuana: ', TijuanaOffset);
+    // console.log('ciudad juarez: ', CiudadJuarezOffset);
+    // console.log('hermosillo: ', HermosilloOffset);
+    // console.log('acapulco: ', AcapulcoOffset);
+
+    // const time = new Date();
+    // const offset = time.getTimezoneOffset() / 60;
+    // console.log('offset: ', offset);
     // @ts-ignore
     this.order = JSON.parse(localStorage.getItem("order"));
-    console.log(this.order)
     this.aRoute.queryParams.subscribe(params =>{
       if (params['ciudad']) {
         this.companyId = parseInt(params['ciudad'])
@@ -79,6 +93,20 @@ export class OrderComponent implements OnInit {
         this.router.navigate(['/'])
     });
   }
+
+  openDialog(): void {
+      const dialogRef = this.dialog.open(ResponseModalComponent, {
+        width: '450px',
+        data: {
+          id: this.order?.parter?.id,
+        }
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        // @ts-ignore
+        this.order = JSON.parse(localStorage.getItem("order"));
+      });
+    }
 
   substractOffsetTime(date: string): string {
     // get time offset and substract it from the date
@@ -99,7 +127,28 @@ export class OrderComponent implements OnInit {
   TimbrarFactura(){
     this.isWorking = true;
     if (this.l10n_mx_edi_usage == '0'){
-      alert('Debes seleccionar un uso de CFDI para continuar');
+      // alert('Debes seleccionar un uso de CFDI para continuar');
+      // Swal.fire({
+      //   title: 'Campos requeridos',
+      //   text: 'Debes seleccionar un uso de CFDI para continuar',
+      //   icon: 'warning',
+      //   toast: true,
+      //   position: 'top-end',
+      //   timer: 4000,
+      //   timerProgressBar: true,
+      //   background: '#e7a71d',
+      //   color: '#fff',
+      //   iconColor: '#fff',
+      //   showConfirmButton: false,
+      //   didOpen: (toast) => {
+      //     toast.onclick = () => {
+      //       Swal.close();
+      //     }
+      //   }
+      // })
+      this.toastr.warning('Debes seleccionar un uso de CFDI para continuar', 'Campos requeridos', {
+        progressBar: true
+      });
       this.isWorking = false;
       this.isLoading = false;
       return;
@@ -107,20 +156,39 @@ export class OrderComponent implements OnInit {
     this.apiService.TimbrarFactura(this.order.id, this.partnerId, this.l10n_mx_edi_usage).subscribe({
       next: value => {
         if (value.result === "OK"){
-          this.showButton = false;
           this.isWorking = false;
-          this.mensaje = true;
-          this.mensajeHeader = 'Factura generada'
-          this.mensajeText = `La factura se ha generado exitosamente y se ha enviado al correo registrado`;
-          this.tipoAlert = 'success';
+
+          Swal.fire({
+            title: 'Factura generada',
+            text: 'La factura se ha generado exitosamente y se ha enviado al correo registrado, redireccionando a la vista de busqueda...',
+            icon: 'success',
+            allowOutsideClick: false,
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#cc2128',
+            showConfirmButton: true,
+            willClose: () => {
+              this.router.navigate(['buscar'], {queryParams: {ciudad: this.companyId}});
+            }
+          })
         }
         if (value.result && value.result.error){
           if (value.result.message)
-            alert(value.result.message);
+            // alert(value.result.message);
             this.isWorking = false;
+
+            Swal.fire({
+              title: 'Error al timbrar la factura',
+              text: value.result.message,
+              icon: 'error',
+              allowOutsideClick: false,
+              showConfirmButton: true,
+              confirmButtonText: 'Cerrar',
+              confirmButtonColor: '#cc2128',
+            })
           if (value.result.messages){
-            this.mensaje = true;
-            this.mensajeHeader = 'Error al timbrar'
+            // let mensaje = []
+            // this.mensaje = true;
+            // this.mensajeHeader = 'Error al timbrar'
             this.isWorking = false;
             for (let i of value.result.messages){
               if (i){
@@ -128,21 +196,56 @@ export class OrderComponent implements OnInit {
                 this.mensajeText = i;
               }
             }
+            Swal.fire({
+              title: 'Error al timbrar la factura',
+              html: this.mensajeText,
+              icon: 'error',
+              allowOutsideClick: false,
+              showConfirmButton: true,
+              confirmButtonText: 'Cerrar',
+              confirmButtonColor: '#cc2128',
+            })
           }
           this.isWorking = false;
         }
         if (value.error){
           this.isWorking = false;
-          alert("Ha ocurrido un error en el servidor y tu factura no pudo ser timbrada, si el problema persiste comunicate con soporte para obtener tu factura")
+          Swal.fire({
+            title: 'Ha ocurrido un error con el servidor',
+            text: value.error?.message,
+            icon: 'error',
+            allowOutsideClick: false,
+            showConfirmButton: true,
+            closeButtonHtml: 'Cerrar',
+            confirmButtonColor: '#cc2128',
+            confirmButtonText: 'Cerrar',
+            backdrop: true,
+          });
         }
       },
       error: err => {
         // TODO handle error
-        alert("Error al generar factura ");
+        // alert("Error al generar factura ");
+        Swal.fire({
+          title: 'Ha ocurrido un error con el servidor',
+          // text: value.error?.message,
+          icon: 'error',
+          allowOutsideClick: false,
+          showConfirmButton: true,
+          closeButtonHtml: 'Cerrar',
+          confirmButtonColor: '#cc2128',
+          confirmButtonText: 'Cerrar',
+          backdrop: true,
+        });
         this.isWorking = false;
       }
     });
-
   }
 
+
+  closeMessageTimeout(){
+    setTimeout(() => {
+      this.mensaje = false;
+    }, 5000);
+  }
 }

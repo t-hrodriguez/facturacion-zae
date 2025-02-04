@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {GLOBAL} from "./global";
 import {Observable} from "rxjs";
+import { IClient, IClientResponse, IOdooClientResponse } from '../interfaces/client.interface';
 
 const HTTP_HEADERS = {
   headers: new HttpHeaders({
@@ -37,6 +38,26 @@ export class ClienteService {
       }
     };
     return this.httpClient.post(this.url + "cliente/changeorder", JSON.stringify(body), HTTP_HEADERS);
+  }
+
+  ObtenerClientePorId(partnerId: number): Observable<IOdooClientResponse>{
+    let body = {
+      "params": {
+        "partner_id": partnerId
+      }
+    };
+    return this.httpClient.post<IOdooClientResponse>(this.url + "cliente/search", JSON.stringify(body), HTTP_HEADERS);
+  }
+
+  ActualizarCliente(partner_id: number, data: any, order_id: number): Observable<any>{
+    let body = {
+      "params": {
+        "partner_id": partner_id,
+        "partner_data": data,
+        "order_id": order_id
+      }
+    };
+    return this.httpClient.post(this.url + "cliente/update", JSON.stringify(body), HTTP_HEADERS);
   }
 
   CrearCliente(name: string, zip: string, vat: string, email: string, companyId: number, l10n_mx_edi_fiscal_regime: string, orderId: number): Observable<any>{
