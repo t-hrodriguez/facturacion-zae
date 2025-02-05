@@ -17,7 +17,7 @@
       </select>
     </div>
     <div class="mb-4" *ngIf="tipo == '2'">
-      <label class="form-label" for="pos">Punto de venta:</label>
+      <label class="form-label" for="pos">Punto de venta: <span><i (click)="openDialog(dataGasparPos)" class="fa-solid fa-circle-info hover:cursor-pointer"></i></span></label>
       <select [(ngModel)]="pointOfSale" name="pos" id="pos" class="form-control"
               aria-label="Small" aria-describedby="inputGroup-sizing-sm"
               required="">
@@ -25,10 +25,18 @@
         <option *ngFor="let pos of pointOfSales" [ngValue]="pos.id">{{ pos.name }}</option>
       </select>
     </div>
-    <div class="mb-4">
-      <label class="form-label" for="number">Número:</label>
+    <div class="mb-4" *ngIf="tipo == '2'">
+      <label class="form-label" for="number">Número: <span><i (click)="openDialog(dataGasparNote)" class="fa-solid fa-circle-info hover:cursor-pointer"></i></span></label>
       <input [(ngModel)]="saleRef" name="orden" type="text" id="number" class="form-control"
              aria-label="Small" aria-describedby="inputGroup-sizing-sm" placeholder="Ingresa Número"
+             required/>
+    </div>
+    <div class="mb-4" *ngIf="tipo == '1'">
+      <label class="form-label" for="numberTicket">Número: <span><i (click)="openDialog(dataNumberTicket)" class="fa-solid fa-circle-info hover:cursor-pointer"></i></span></label>
+      <input [(ngModel)]="saleRefTicket" name="ordenTicket" type="text" id="numberTicket" class="form-control"
+             aria-label="Small" aria-describedby="inputGroup-sizing-sm" placeholder="Ingresa Número"
+             maxlength="14" pattern="[0-9]*" title="Solo se permiten números" (input)="validateNumber($event)"
+             minlength="14"
              required/>
     </div>
     <div class="mb-4">
@@ -39,8 +47,8 @@
 
     <div class="w-full flex justify-center py-3">
       <button 
-        [disabled]="isLoading"
-        class="bg-red-zae text-white flex items-center justify-center gap-4 mx-auto py-2 px-4 rounded disabled:opacity-75 disabled:hover:bg-[#cc2128] hover:bg-red-900 transition duration-200" 
+        [disabled]="isLoading || !validateData()"
+        class="bg-red-zae text-white hover:cursor-pointer disabled:cursor-default flex items-center justify-center gap-4 mx-auto py-2 px-4 rounded disabled:opacity-75 disabled:hover:bg-[#cc2128] hover:bg-red-900 transition duration-200" 
         type="submit"
       >
         Buscar <span *ngIf="isLoading"><i class="fa-solid fa-circle-notch animate-spin"></i></span>

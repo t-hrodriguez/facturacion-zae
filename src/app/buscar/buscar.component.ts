@@ -7,6 +7,7 @@ import {ApiService} from "../services/api.service";
 import { InfoModalComponent } from './info-modal/info-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
+import { title } from 'process';
 
 @Component({
   selector: 'app-buscar',
@@ -23,6 +24,7 @@ export class BuscarComponent implements OnInit {
   public pointOfSale: number = 0;
   public gasparRef: string = '';
   public saleRef: string = '';
+  public saleRefTicket: string = '';
   public saleDate!: Date;
   private companyId!: number;
   public tipo: string = "0";
@@ -32,16 +34,41 @@ export class BuscarComponent implements OnInit {
 
   dataSearchBy = [
     { 
-      title: 'Ticket de venta',
-      description: 'Este es el número de orden que se encuentra en la parte inferior de tu ticket de venta',
-      image: `<img class="w-1/2" src="assets/img/1tomza.png" alt="Ticket de venta">`
+      title: 'Nota de venta',
+      description: 'Este es el ticket generado al realizar tu compra gaspar.',
+      image: `<img class="w-1/2" src="assets/img/ticket-gaspar.jpg" alt="Nota de venta">`
     },
     { 
-      title: 'Nota de venta',
-      description: 'Este es el número de orden que se encuentra en la parte inferior de tu nota de venta',
-      image: `<img class="w-1/2" src="assets/img/1tomza2.png" alt="Nota de venta">`
+      title: 'Ticket de venta',
+      description: 'Este es el ticket de venta que generado al realizar tu compra en <a class="font-bold" target="_blank" href="https://www.zae.mx">www.zae.mx</a>.',
+      image: `<img class="w-1/2" src="assets/img/ticket-venta.png" alt="Ticket de venta">`
     }
   ]
+
+  dataNumberTicket = [
+    {
+      title: 'Número de ticket',
+      description: 'Este es el número que se encuentra en la parte inferior de tu ticket de venta, se debe ingresar <strong>sin guiones ni espacios</strong> y únicamente los números (14 digitos).',
+      image: `<img class="w-3/5" src="assets/img/numero-ticket.png" alt="Ticket de venta">`
+    }
+  ]
+
+  dataGasparNote = [
+    {
+      title: 'Número de nota',
+      description: 'Este es el número que se encuentra en la parte superior de tu nota, marcado como folio de venta.',
+      image: `<img class="w-3/5" src="assets/img/nota-gaspar.png" alt="Nota de venta">`
+    }
+  ]
+
+  dataGasparPos = [
+    {
+      title: 'Punto de venta',
+      description: 'Es el punto de venta del cual se realizo la venta gaspar, se encuentra en la parte superior de tu nota, marcado como punto de venta.',
+      image: `<img class="w-3/5" src="assets/img/nota-gaspar.png" alt="Punto de venta">`
+    }
+  ]
+
 
   constructor(
     private busquedaService: BusquedaService,
@@ -52,6 +79,16 @@ export class BuscarComponent implements OnInit {
     public dialog: MatDialog,
     private toastr: ToastrService
   ) { }
+
+  validateNumber(event: any): void {
+    const input = event.target;
+    const value = input.value;
+    const regex = /^[0-9]*$/;
+
+    if (!regex.test(value)) {
+      input.value = value.replace(/[^0-9]/g, '');
+    }
+  }
 
   ngOnInit(): void {
     // this.openDialog();
@@ -90,7 +127,7 @@ export class BuscarComponent implements OnInit {
       return;
     }
     this.isLoading = true;
-    this.busquedaService.SearchOrder(this.pointOfSale, this.saleRef, this.companyId, parseInt(this.tipo), this.saleDate).subscribe({
+    this.busquedaService.SearchOrder(this.pointOfSale, this.saleRef, this.saleRefTicket, this.companyId, parseInt(this.tipo), this.saleDate).subscribe({
       next: (r) => {
         this.isLoading = false;
         if (r.result && r.result.length == 0){
@@ -106,7 +143,6 @@ export class BuscarComponent implements OnInit {
         else{
           let order = r.result[0];
           if (order.partner.rfc === this.rfc){
-            console.log('mismo rfc')
             localStorage.setItem("order", JSON.stringify(order));
             localStorage.setItem("rfc", this.rfc)
             this.router.navigate(['orden'], {queryParams: {ciudad: this.companyId}})
@@ -164,5 +200,35 @@ export class BuscarComponent implements OnInit {
         this.toastr.error('Ha ocurrido un error con el servicio al buscar la orden de venta', 'Error');
       }
     });
+  }
+
+  validateData(): boolean {
+    const ticket = (
+      this.saleRefTicket.length >=14 &&
+      this.rfc !== '' && this.rfc.length >= 12 &&
+      this.saleDate !== undefined
+    )
+
+    const nota = (
+      this.pointOfSale !== 0 &&
+      this.rfc !== '' && this.rfc.length >= 12 &&
+      this.saleRef !== ''&&
+      this.saleDate !== undefined
+    )
+
+    const tipo: {[key: string]: boolean} = {
+      '1': ticket,
+      '2': nota
+    }
+
+    if (this.tipo !== '0'){
+      if(tipo[this.tipo]){
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
   }
 }

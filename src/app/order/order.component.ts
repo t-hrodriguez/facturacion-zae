@@ -105,6 +105,7 @@ export class OrderComponent implements OnInit {
       dialogRef.afterClosed().subscribe(result => {
         // @ts-ignore
         this.order = JSON.parse(localStorage.getItem("order"));
+        this.partnerId = this.order.partner.id;
       });
     }
 

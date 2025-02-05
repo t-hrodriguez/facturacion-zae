@@ -27,10 +27,15 @@ export class BusquedaService {
     this.url = GLOBAL.url;
   }
 
-  SearchOrder(pointOfSale:number, saleRef:string, companyId: number, tipo: number, date: Date): Observable<any>{
+  SearchOrder(pointOfSale:number, saleRef:string, saleRefTicket: string, companyId: number, tipo: number, date: Date): Observable<any>{
     let args = []
-    if (tipo == 1)
-      args.push(["pos_reference", "like", saleRef], ["company_id", "=", companyId]);
+    if (tipo == 1){
+      // agregar guines a saleRefTicket despues del septimo caracter
+      saleRefTicket = saleRefTicket.slice(0, 7) + '-' + saleRefTicket.slice(7);
+      saleRefTicket = saleRefTicket.slice(0, 11) + '-' + saleRefTicket.slice(11);
+
+      args.push(["pos_reference", "like", `Orden ${saleRefTicket}`], ["company_id", "=", companyId]);
+    }
     else
       args.push(["note", "=", saleRef], ["config_id", "=", pointOfSale], ["company_id", "=", companyId]);
     let headers = new HttpHeaders({
@@ -45,6 +50,6 @@ export class BusquedaService {
           "utc_diff": this.timesMap[companyId.toString()] || 0
         }
     };
-    return this.httpClient.post(this.url + "buscar", JSON.stringify(body), {headers});
+    return this.httpClient.post(this.url + "buscar", JSON.stringify(body), {headers}); //this.httpClient.post(this.url + "buscar", JSON.stringify(body), {headers})
   }
 }

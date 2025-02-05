@@ -1,17 +1,18 @@
-<div class="max-h-[90vh]">
+<div class="max-h-[90vh] pb-10">
   <ng-container *ngFor="let item of data" class="bg-slate-800">
-    <h1 mat-dialog-title>{{item.title}}</h1>
+    <h1 class="font-bold">{{item.title}}</h1>
     <div>
-      <p>{{item.description}}</p>
+      <p [innerHTML]="item.description"></p>
       <!-- <h1>{{item.order}}</h1> -->
       <div loading="lazy" class="my-10 grid place-items-center" [innerHTML]="item.image"></div>
     </div>
-    <div mat-dialog-actions>
-    </div>
+    
   </ng-container>
-  <button mat-button
-    class="bg-red-zae text-white flex items-center text-md justify-center gap-4 mx-auto py-1 px-2 rounded disabled:opacity-75 outline-none disabled:hover:bg-[#cc2128] hover:bg-red-900 transition duration-200"
-    (click)="close()">
-    Cerrar
-  </button>
+  <div mat-dialog-actions>
+    <button mat-button
+      class="bg-red-zae text-white flex items-center text-md justify-center gap-4 mx-auto py-1 px-2 rounded disabled:opacity-75 outline-none disabled:hover:bg-[#cc2128] hover:bg-red-900 transition duration-200"
+      (click)="close()">
+      Cerrar
+    </button>
+  </div>
 </div>
