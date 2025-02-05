@@ -11,17 +11,17 @@
         <input [(ngModel)]="dataClient.vat" name="vat" type="text" id="vat" disabled class="w-full disabled:opacity-65 bg-transparent" placeholder="XAXX" required>
       </div>
       <div class="mb-4">
-        <label class="form-label" for="email">Correo Electrónico</label>
-        <input [(ngModel)]="dataClient.email" name="email" type="textarea" id="email" disabled class="w-full disabled:opacity-65 bg-transparent" placeholder="name@email.com" required>
-      </div>
-      <div class="mb-4">
         <label class="form-label" for="postal_code">Código Postal</label>
         <input [(ngModel)]="dataClient.zip" name="postal_code" type="text" id="postal_code" disabled class="w-full disabled:opacity-65 bg-transparent" placeholder="00000" required>
       </div>
       <div class="mb-4">
         <label class="form-label" for="fiscal_regime">Régimen Fiscal</label>
         <input [value]="getFregime(dataClient.l10n_mx_edi_fiscal_regime.toString())" name="fiscal_regime" id="fiscal_regime" disabled class="w-full disabled:opacity-65 bg-transparent"
-                required />
+        required />
+      </div>
+      <div class="mb-4">
+        <label class="form-label" for="email">Correo Electrónico</label>
+        <input [(ngModel)]="dataClient.email" name="email" type="textarea" id="email" disabled class="w-full disabled:opacity-65 bg-transparent" placeholder="name@email.com" required>
       </div>
     </div>
 
