@@ -5,6 +5,7 @@ import { IClient } from 'src/app/interfaces/client.interface';
 import { ClienteService } from 'src/app/services/cliente.service';
 import { ToastrService } from 'ngx-toastr';
 import Swal from 'sweetalert2';
+import { GlobalStateService } from 'src/app/services/globalState.service';
 
 @Component({
   selector: 'app-response-modal',
@@ -22,6 +23,9 @@ export class ResponseModalComponent implements OnInit {
     zip: '',
     l10n_mx_edi_fiscal_regime: 0,
   };
+
+  soporte: string = '';
+  newEmail: string = '';
 
   isLoading: boolean = false;
   isLoadingUpdate: boolean = false;
@@ -57,10 +61,42 @@ export class ResponseModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private route: ActivatedRoute,
     private clienteService: ClienteService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private globalState: GlobalStateService
   ) {}
 
+  getClientInfo(partner_id: number): void {
+    this.clienteService.ObtenerClientePorId(partner_id).subscribe({
+      next: (r) => {
+        if (r.result && !r.result.error) {
+          this.dataClient = r?.result?.partner as IClient;
+          if (!this.dataClient.email)
+            this.dataClient.email = '';
+          this.isLoading = false;
+        } else {
+          this.isLoading = false;
+          this.toastr.error(
+            r?.result?.message,
+            'Error',
+            { progressBar: true }
+          );
+          this.close();
+        }
+      },
+      error: (e) => {
+        this.toastr.error('Ha ocurrido un error con el servidor al obtener los datos del cliente', 'Error');
+        this.isLoading = false;
+        this.close();
+      },
+    });
+  }
+
   ngOnInit(): void {
+    this.globalState.state$.subscribe({
+      next: (r) => {
+        this.soporte = r.email;
+      }
+    });
     this.fiscalRegimes.sort((a, b) => a.name.localeCompare(b.name));
     const order = localStorage.getItem('order');
     if (order) {
@@ -68,52 +104,39 @@ export class ResponseModalComponent implements OnInit {
       let orderJson = JSON.parse(order);
       this.partnerId = orderJson.partner.id;
       this.orderId = orderJson.id;
-      this.clienteService.ObtenerClientePorId(orderJson.partner?.id).subscribe({
-        next: (r) => {
-          if (r.result && !r.result.error) {
-            this.dataClient = r?.result?.partner as IClient;
-            this.isLoading = false;
-          } else {
-            this.isLoading = false;
-            this.toastr.error(
-              r?.result?.message,
-              'Error',
-              { progressBar: true }
-            );
-            this.close();
-          }
-        },
-        error: (e) => {
-          this.toastr.error('Ha ocurrido un error con el servidor al obtener los datos del cliente', 'Error');
-          this.isLoading = false;
-          this.close();
-        },
-      });
+      this.getClientInfo(orderJson.partner?.id)
     } else {
       this.toastr.warning('No se ha encontrado la orden', 'Advertencia');
     }
   }
 
+  getFregime(id: string): string {
+    const regime = this.fiscalRegimes.find((r) => r.id === id);
+    return regime?.name || '-';
+  }
 
   updateFiscalData(): void {
     if (this.validateData()) {
       this.isLoadingUpdate = true;
-      this.clienteService.ActualizarCliente(this.partnerId, this.dataClient, this.orderId).subscribe({
+      // this.isLoading = true;
+      this.clienteService.ActualizarCliente(this.partnerId, this.dataClient, this.newEmail, this.orderId).subscribe({
         next: (r) => {
+          this.isLoading = false;
           if (r.result && !r.result.error) {
-            console.log('datos fiscales: ',r.result);
             this.toastr.success(
-              'Datos fiscales actualizados correctamente',
+              'Correo agregado correctamente', 
               'Éxito',
               { progressBar: true }
             );
+            this.getClientInfo(r.result.order.partner.id);
+            this.newEmail = '';
             localStorage.setItem('order', JSON.stringify(r.result.order));
             this.isLoadingUpdate = false;
-            this.close();
+            // this.close();
           } else if (r.error){
             this.isLoadingUpdate = false;
             this.toastr.error(
-              'Ha ocurrido un error con el servidor al actualizar los datos del cliente',
+              'Ha ocurrido un error con el servidor al agregar el correo',
               'Error',
               { progressBar: true }
             );
@@ -127,17 +150,24 @@ export class ResponseModalComponent implements OnInit {
           }
         },
         error: (e) => {
-          this.toastr.error('Ha ocurrido un error con el servidor al actualizar los datos del cliente', 'Error');
+          this.isLoading = false;
+          this.toastr.error('Ha ocurrido un error con el servidor al agregar el correo', 'Error');
           this.isLoadingUpdate = false;
         },
       });
     } else {
-      this.toastr.warning('Por favor, llena todos los campos', 'Advertencia');
+      this.toastr.warning('Por favor, llena el campo para agregar un correo', 'Advertencia');
     }
   }
 
   validateData(): boolean {
-    if (this.dataClient.name && this.dataClient.vat && this.dataClient.email && this.dataClient.zip && this.dataClient.l10n_mx_edi_fiscal_regime) {
+    // regex para correos y que pueda agregar mas deparado por comas y punto y coma
+    const emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})([;,]\s*[\w-\.]+@([\w-]+\.)+[\w-]{2,4})*$/;
+    if (
+      this.dataClient.name && this.dataClient.vat && 
+      this.dataClient.zip && this.dataClient.l10n_mx_edi_fiscal_regime && this.newEmail &&
+      this.newEmail.match(emailRegex)
+    ) {
       return true;
     }
     return false;

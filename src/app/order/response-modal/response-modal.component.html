@@ -1,45 +1,59 @@
-<ng-container *ngIf="!isLoading">
-  <h1 mat-dialog-title>Datos fiscales</h1>
-  <div>
-    <div class="mb-4">
-      <label class="form-label" for="name">Nombre o Razón Social</label>
-      <input [(ngModel)]="dataClient.name" name="name" disabled type="text" [value]="dataClient.name" id="name" class="form-control disabled:opacity-65" placeholder="Nombre o Razón Social" required>
+<ng-container  *ngIf="!isLoading">
+  <div class="max-h-[90vh] pb-10">
+    <h1 mat-dialog-title>Datos fiscales</h1>
+    <div>
+      <div class="mb-4">
+        <label class="form-label" for="name">Nombre o Razón Social</label>
+        <input [(ngModel)]="dataClient.name" name="name" disabled type="text" [value]="dataClient.name" id="name" class="w-full disabled:opacity-65 bg-transparent" placeholder="Nombre o Razón Social" required>
+      </div>
+      <div class="mb-4">
+        <label class="form-label" for="vat">RFC</label>
+        <input [(ngModel)]="dataClient.vat" name="vat" type="text" id="vat" disabled class="w-full disabled:opacity-65 bg-transparent" placeholder="XAXX" required>
+      </div>
+      <div class="mb-4">
+        <label class="form-label" for="email">Correo Electrónico</label>
+        <input [(ngModel)]="dataClient.email" name="email" type="textarea" id="email" disabled class="w-full disabled:opacity-65 bg-transparent" placeholder="name@email.com" required>
+      </div>
+      <div class="mb-4">
+        <label class="form-label" for="postal_code">Código Postal</label>
+        <input [(ngModel)]="dataClient.zip" name="postal_code" type="text" id="postal_code" disabled class="w-full disabled:opacity-65 bg-transparent" placeholder="00000" required>
+      </div>
+      <div class="mb-4">
+        <label class="form-label" for="fiscal_regime">Régimen Fiscal</label>
+        <input [value]="getFregime(dataClient.l10n_mx_edi_fiscal_regime.toString())" name="fiscal_regime" id="fiscal_regime" disabled class="w-full disabled:opacity-65 bg-transparent"
+                required />
+      </div>
     </div>
-    <div class="mb-4">
-      <label class="form-label" for="vat">RFC</label>
-      <input [(ngModel)]="dataClient.vat" name="vat" type="text" id="vat" class="form-control" placeholder="XAXX" required>
-    </div>
-    <div class="mb-4">
-      <label class="form-label" for="email">Correo Electrónico</label>
-      <input [(ngModel)]="dataClient.email" name="email" type="text" id="email" class="form-control" placeholder="name@email.com" required>
-    </div>
-    <div class="mb-4">
-      <label class="form-label" for="postal_code">Código Postal</label>
-      <input [(ngModel)]="dataClient.zip" name="postal_code" type="text" id="postal_code" class="form-control" placeholder="00000" required>
-    </div>
-    <div class="mb-4">
-      <label class="form-label" for="fiscal_regime">Régimen Fiscal</label>
-      <select [(ngModel)]="dataClient.l10n_mx_edi_fiscal_regime" name="fiscal_regime" id="fiscal_regime" class="form-control"
-              aria-label="Small" aria-describedby="inputGroup-sizing-sm"
-              required>
-        <option [ngValue]="'0'" disabled>Selecciona un Régimen Fiscal</option>
-        <option *ngFor="let fr of fiscalRegimes" [ngValue]="fr.id">{{ fr.name }}</option>
-      </select>
-    </div>
-  </div>
-  <div class="flex justify-center gap-2 py-4">
-    <button mat-button
-      class="bg-red-zae text-white border-none flex items-center text-md justify-center gap-4 mx-auto py-1 px-2 rounded disabled:opacity-65 outline-none disabled:hover:bg-[#cc2128] hover:bg-red-900 transition duration-200"
-      (click)="close()">
-      Cerrar
-    </button>
 
-    <button mat-button
-      [disabled]="!validateData()"
-      class="bg-red-zae text-white border-none flex items-center text-md justify-center gap-4 mx-auto py-1 px-2 rounded disabled:opacity-65 outline-none disabled:hover:bg-[#cc2128] hover:bg-red-900 transition duration-200"
-      (click)="updateFiscalData()">
-      Actualizar <i *ngIf="isLoadingUpdate" class="fa-solid fa-circle-notch animate-spin"></i>
-    </button>
+
+    <div class="border-t-[1px] border-slate-700 mt-10 px-2 py-4">
+      <div class="mb-4">
+        <label class="form-label flex items-center gap-4" for="newEmail">Agregar correo electrónico <i class="fa-solid fa-circle-plus"></i></label>
+        <input [(ngModel)]="newEmail" name="email" type="text" id="newEmail" class="w-full border-[1px] p-2 outline-none rounded-lg bg-transparent" placeholder="name@email.com" required>
+      </div>
+    </div>
+
+
+    <div class="flex justify-center gap-2 py-4">
+      <button mat-button
+        class="border-[#cc2128] border-2 text-[#cc2128] hover:text-white flex items-center text-md justify-center gap-4 mx-auto py-1 px-2 rounded disabled:opacity-65 outline-none disabled:hover:bg-[#cc2128] hover:bg-[#cc2128] transition duration-200"
+        (click)="close()">
+        Cerrar
+      </button>
+
+      <button mat-button
+        [disabled]="!validateData()"
+        class="bg-red-zae text-white border-none flex items-center text-md justify-center gap-4 mx-auto py-1 px-2 rounded disabled:opacity-65 outline-none disabled:hover:bg-[#cc2128] hover:bg-red-900 transition duration-200"
+        (click)="updateFiscalData()">
+        Agregar <i *ngIf="isLoadingUpdate" class="fa-solid fa-circle-notch animate-spin"></i>
+      </button>
+    </div>
+    <div class="w-full pt-10 pb-10">
+      <p class="text-sm text-slate-500">
+        Te recomiendo que verifiques cada uno de los datos, como tu nombre o razón social, RFC, correo electrónico, código postal y Régimen Fiscal. <br/><br/>
+        Si encuentras que son incorrectos o hay algún error, favor de comunicarte con nuestro equipo de <a class="underline font-bold" [href]="soporte">soporte</a>.
+      </p>
+    </div>
   </div>
 </ng-container>
 

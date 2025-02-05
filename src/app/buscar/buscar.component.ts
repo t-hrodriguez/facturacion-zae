@@ -36,7 +36,7 @@ export class BuscarComponent implements OnInit {
     { 
       title: 'Nota de venta',
       description: 'Este es el ticket generado al realizar tu compra gaspar.',
-      image: `<img class="w-1/2" src="assets/img/ticket-gaspar.jpg" alt="Nota de venta">`
+      image: `<img class="w-1/2" src="assets/img/ticket-gaspar.png" alt="Nota de venta">`
     },
     { 
       title: 'Ticket de venta',
@@ -56,7 +56,7 @@ export class BuscarComponent implements OnInit {
   dataGasparNote = [
     {
       title: 'Número de nota',
-      description: 'Este es el número que se encuentra en la parte superior de tu nota, marcado como folio de venta.',
+      description: 'Este es el número que se encuentra en la parte superior de tu nota, marcado como folio venta.',
       image: `<img class="w-3/5" src="assets/img/nota-gaspar.png" alt="Nota de venta">`
     }
   ]

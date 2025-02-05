@@ -104,6 +104,7 @@ export class OrderComponent implements OnInit {
   openDialog(): void {
       const dialogRef = this.dialog.open(ResponseModalComponent, {
         width: '450px',
+        disableClose: true,
         data: {
           id: this.order?.parter?.id,
         }

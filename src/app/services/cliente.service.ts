@@ -49,14 +49,29 @@ export class ClienteService {
     return this.httpClient.post<IOdooClientResponse>(this.url + "cliente/search", JSON.stringify(body), HTTP_HEADERS);
   }
 
-  ActualizarCliente(partner_id: number, data: any, order_id: number): Observable<any>{
+  ActualizarCliente(partner_id: number, data: any, newEmail: string, order_id: number): Observable<any>{
+    let dataDTO = data
+    let emailJoined: string = '';
+    let last_char = dataDTO.email[dataDTO.email.length - 1];
+    if (last_char && last_char === ';') 
+      emailJoined = dataDTO.email + newEmail;
+    else 
+    emailJoined = dataDTO.email + (last_char != undefined ? ';' : '') + newEmail;
+
     let body = {
       "params": {
         "partner_id": partner_id,
-        "partner_data": data,
+        "partner_data": {
+          "name": dataDTO.name,
+          "zip": dataDTO.zip,
+          "vat": dataDTO.vat,
+          "email": emailJoined,
+          "l10n_mx_edi_fiscal_regime": dataDTO.l10n_mx_edi_fiscal_regime
+        },
         "order_id": order_id
       }
     };
+    
     return this.httpClient.post(this.url + "cliente/update", JSON.stringify(body), HTTP_HEADERS);
   }
 
