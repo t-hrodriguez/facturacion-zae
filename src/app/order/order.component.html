@@ -9,11 +9,16 @@
   <div class="mensaje info" *ngIf="isWorking">
     <h3 class="error-header flex items-center gap-2">Facturando <i class="fa-solid fa-circle-notch animate-spin"></i></h3>
   </div>
-  <div class="w-full flex justify-end items-center gap-4">
+  <div class="w-full flex justify-between items-center gap-4 py-4">
+    <button
+        (click)="returnHome()"
+        class="border-[#cc2128] border-2 text-[#cc2128] hover:text-white flex items-center justify-center gap-4 py-2 px-4 rounded disabled:opacity-75 disabled:hover:bg-[#cc2128] hover:bg-[#cc2128] transition duration-200">
+        Cerrar <i class="fa-solid fa-reply"></i>
+      </button>
     <button 
       class="text-blue-400 underline hover:text-opacity-80 hover:cursor-pointer transition-all ease-linear duration-150"
       (click)="openDialog()">
-      Editar datos fiscales <i class="fa-solid fa-pen-to-square"></i>
+      Ver datos fiscales <i class="fa-solid fa-pen-to-square"></i>
     </button>
   </div>
   <h1 class="text-2xl font-bold mb-4">Tu orden de compra</h1>
@@ -21,22 +26,22 @@
   <div class="mb-6 datos">
 
     <label class="text-gray-700">Cliente: </label>
-    <span>{{order.partner.name}}</span>
+    <span>{{order?.partner?.name}}</span>
 
     <label class="text-gray-700">No. Orden:</label>
-    <span>{{order.name}}</span>
+    <span>{{order?.name}}</span>
 
     <label class="text-gray-700">Punto de venta:</label>
-    <span>{{order.config_id}}</span>
+    <span>{{order?.config_id}}</span>
 
     <label class="text-gray-700">Fecha de venta:</label>
-    <span>{{substractOffsetTime(order.date_order)}}</span>
+    <span>{{substractOffsetTime(order?.date_order)}}</span>
 
     <label class="text-gray-700">Referencia de venta:</label>
-    <span>{{order.pos_reference}}</span>
+    <span>{{order?.pos_reference}}</span>
 
     <label class="text-gray-700">Nota gaspar:</label>
-    <span>{{order.note != false ? order.note : ''}}</span>
+    <span>{{order?.note != false ? order?.note : ''}}</span>
   </div>
 
   <table class="min-w-full border-collapse border border-gray-300">
@@ -49,11 +54,11 @@
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let line of order.lines">
-      <td class="border border-gray-300 px-4 py-2">{{line.product_name}}</td>
-      <td class="border border-gray-300 px-4 py-2">{{line.qty}}</td>
-      <td class="border border-gray-300 px-4 py-2">{{line.unit_price}}</td>
-      <td class="border border-gray-300 px-4 py-2">{{line.subtotal | currency}}</td>
+    <tr *ngFor="let line of order?.lines">
+      <td class="border border-gray-300 px-4 py-2">{{line?.product_name}}</td>
+      <td class="border border-gray-300 px-4 py-2">{{line?.qty}}</td>
+      <td class="border border-gray-300 px-4 py-2">{{line?.unit_price}}</td>
+      <td class="border border-gray-300 px-4 py-2">{{line?.subtotal | currency}}</td>
     </tr>
     </tbody>
   </table>
@@ -62,7 +67,7 @@
     <div class="flex space-x-4">
       <select [(ngModel)]="l10n_mx_edi_usage" class="px-4 py-2 border rounded-lg text-gray-700 max-w-xs">
         <option [ngValue]="'0'" disabled>--Selecciona un uso CFDI--</option>
-        <option *ngFor="let reg of ediUse" [ngValue]="reg.id">{{reg.name}}</option>
+        <option *ngFor="let reg of ediUse" [ngValue]="reg?.id">{{reg?.name}}</option>
       </select>
       <button [disabled]="isWorking" class="px-6 py-2 bg-[#cc2128] text-white flex items-center gap-4 rounded-lg hover:bg-red-900 disabled:hover:bg-[#cc2128] disabled:opacity-50" (click)="TimbrarFactura()">
         Facturar
@@ -74,15 +79,15 @@
       <table class="table-auto w-full">
         <tr>
           <td class="px-4 py-2 text-right">Impuesto:</td>
-          <td class="px-4 py-2 text-right">{{order.amount_tax | currency}}</td>
+          <td class="px-4 py-2 text-right">{{order?.amount_tax | currency}}</td>
         </tr>
         <tr>
           <td class="px-4 py-2 text-right">Total:</td>
-          <td class="px-4 py-2 text-right">{{order.amount_total | currency}}</td>
+          <td class="px-4 py-2 text-right">{{order?.amount_total | currency}}</td>
         </tr>
         <tr class="font-semibold">
           <td class="px-4 py-2 text-right">Pagado:</td>
-          <td class="px-4 py-2 text-right">{{order.amount_paid | currency}}</td>
+          <td class="px-4 py-2 text-right">{{order?.amount_paid | currency}}</td>
         </tr>
       </table>
     </div>

@@ -40,7 +40,7 @@ export class BuscarComponent implements OnInit {
     },
     { 
       title: 'Ticket de venta',
-      description: 'Este es el ticket de venta que generado al realizar tu compra en <a class="font-bold" target="_blank" href="https://www.zae.mx">www.zae.mx</a>.',
+      description: 'Este es el ticket de venta que generado al realizar tu compra.',
       image: `<img class="w-1/2" src="assets/img/ticket-venta.png" alt="Ticket de venta">`
     }
   ]
@@ -160,7 +160,6 @@ export class BuscarComponent implements OnInit {
                           this.router.navigate(['orden'], {queryParams: {ciudad: this.companyId}})
                         } else {
                           this.isLoading = false;
-                          // alert("Ha ocurrido un error al cambiar el cliente de la orden: " + r.result?.message);
                           this.toastr.error('Ha ocurrido un error al cambiar el cliente de la orden: ' + r.result?.message, 'Error');
                         }
                       }, error: (e) => {
@@ -200,6 +199,12 @@ export class BuscarComponent implements OnInit {
         this.toastr.error('Ha ocurrido un error con el servicio al buscar la orden de venta', 'Error');
       }
     });
+  }
+
+  returnHome() {
+    localStorage.removeItem('order');
+    localStorage.removeItem('rfc');
+    this.router.navigate(['/']);
   }
 
   validateData(): boolean {

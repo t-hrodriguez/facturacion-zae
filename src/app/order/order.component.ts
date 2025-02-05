@@ -74,24 +74,31 @@ export class OrderComponent implements OnInit {
     // const time = new Date();
     // const offset = time.getTimezoneOffset() / 60;
     // console.log('offset: ', offset);
+    this.ediUse.sort((a, b) => a.name.localeCompare(b.name));
     // @ts-ignore
     this.order = JSON.parse(localStorage.getItem("order"));
-    this.aRoute.queryParams.subscribe(params =>{
-      if (params['ciudad']) {
-        this.companyId = parseInt(params['ciudad'])
-        //@ts-ignore
-        this.clienteService.ObtenerCliente(localStorage.getItem("rfc"), this.companyId).subscribe({
-          next: (r) => {
-            if (r.result && r.result.id){
-              this.partnerId = r.result.id;
-            } else
-              this.router.navigate(['cliente'], {queryParams: {ciudad: this.companyId, order_id: this.order.id} });
-          }
-        });
-      }
-      else
-        this.router.navigate(['/'])
-    });
+    if (this.order) {
+      this.aRoute.queryParams.subscribe(params =>{
+        if (params['ciudad']) {
+          this.companyId = parseInt(params['ciudad'])
+          //@ts-ignore
+          this.clienteService.ObtenerCliente(localStorage.getItem("rfc"), this.companyId).subscribe({
+            next: (r) => {
+              if (r.result && r.result.id){
+                this.partnerId = r.result.id;
+              } else
+                this.router.navigate(['cliente'], {queryParams: {ciudad: this.companyId, order_id: this.order.id} });
+            }
+          });
+        }
+        else
+          // if company id is not found, redirect to home
+          this.router.navigate(['/'])
+      });
+    } else {
+      //if order is not found, redirect to home
+      this.router.navigate(['/'])
+    }
   }
 
   openDialog(): void {
@@ -103,6 +110,7 @@ export class OrderComponent implements OnInit {
       });
 
       dialogRef.afterClosed().subscribe(result => {
+        // refresh local storage order key and variable partnerId when dialog is closed
         // @ts-ignore
         this.order = JSON.parse(localStorage.getItem("order"));
         this.partnerId = this.order.partner.id;
@@ -122,7 +130,13 @@ export class OrderComponent implements OnInit {
     const minutes = dateTyped.getMinutes() < 10 ? `0${dateTyped.getMinutes()}` : dateTyped.getMinutes();
     const seconds = dateTyped.getSeconds() < 10 ? `0${dateTyped.getSeconds()}` : dateTyped.getSeconds();
 
-    return `${day}-${month}-${dateTyped.getFullYear()} ${hours}:${minutes}:${seconds}`;
+    return date ? `${day}-${month}-${dateTyped.getFullYear()} ${hours}:${minutes}:${seconds}` : '';
+  }
+
+  returnHome() {
+    localStorage.removeItem('order');
+    localStorage.removeItem('rfc');
+    this.router.navigate(['/']);
   }
 
   TimbrarFactura(){

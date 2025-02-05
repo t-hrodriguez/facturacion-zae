@@ -61,6 +61,7 @@ export class ClienteComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.fiscalRegimes.sort((a, b) => a.name.localeCompare(b.name));
     this.aRoute.queryParams.subscribe({
       next: params => {
         if(params['ciudad'])

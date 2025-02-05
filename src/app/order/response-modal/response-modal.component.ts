@@ -61,6 +61,7 @@ export class ResponseModalComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.fiscalRegimes.sort((a, b) => a.name.localeCompare(b.name));
     const order = localStorage.getItem('order');
     if (order) {
       this.isLoading = true;
