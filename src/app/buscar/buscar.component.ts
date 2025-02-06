@@ -7,7 +7,8 @@ import {ApiService} from "../services/api.service";
 import { InfoModalComponent } from './info-modal/info-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
-import { title } from 'process';
+import Swal from 'sweetalert2';
+import { GlobalStateService } from '../services/globalState.service';
 
 @Component({
   selector: 'app-buscar',
@@ -20,6 +21,7 @@ export class BuscarComponent implements OnInit {
     {id: "2", name: 'Nota de venta'}
   ]
 
+  public soporte: string = '';
   public rfc: string = '';
   public pointOfSale: number = 0;
   public gasparRef: string = '';
@@ -77,7 +79,8 @@ export class BuscarComponent implements OnInit {
     private aRoute: ActivatedRoute,
     private clienteService: ClienteService,
     public dialog: MatDialog,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private globalState: GlobalStateService
   ) { }
 
   validateNumber(event: any): void {
@@ -92,6 +95,11 @@ export class BuscarComponent implements OnInit {
 
   ngOnInit(): void {
     // this.openDialog();
+    this.globalState.state$.subscribe({
+      next: (state) => {
+        this.soporte = state.email;
+      }
+    })
     this.aRoute.queryParams.subscribe({
       next: params => {
         if(params['ciudad'])
@@ -121,83 +129,141 @@ export class BuscarComponent implements OnInit {
     });
   }
 
-  SearchSaleOrder(){
+  // normalize text to remove accents and special characters
+  normalizeText(str: string): string {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  }
+
+  async SearchSaleOrder(){
+    // word to search in the string
+    const regex = new RegExp(`\\b${this.normalizeText('PÚBLICO EN GENERAL')}\\b`, 'i');
     if (this.tipo == "0"){
       this.toastr.warning('Selecciona un valor para "Buscar por"', 'Campo requerido');
       return;
     }
     this.isLoading = true;
-    this.busquedaService.SearchOrder(this.pointOfSale, this.saleRef, this.saleRefTicket, this.companyId, parseInt(this.tipo), this.saleDate).subscribe({
-      next: (r) => {
-        this.isLoading = false;
-        if (r.result && r.result.length == 0){
-          this.isLoading = false;
-          // alert("No se han encontrado ninguna orden de venta");
-          this.toastr.error('No se ha encontrado ninguna orden de venta', 'Error');
-        }
-        else if (r.result && r.result.length > 1){
-          this.isLoading = false;
-          // alert("Esta orden de venta no puede ser facturada debido a que ha sido reembolsada")
-          this.toastr.warning('Esta orden de venta no puede ser facturada debido a que ha sido reembolsada', 'Advertencia');
-        }
-        else{
-          let order = r.result[0];
-          if (order.partner.rfc === this.rfc){
-            localStorage.setItem("order", JSON.stringify(order));
-            localStorage.setItem("rfc", this.rfc)
-            this.router.navigate(['orden'], {queryParams: {ciudad: this.companyId}})
-          }
-          else {
-            if (order.partner.rfc === GLOBAL.rfc) {
-              this.clienteService.ObtenerCliente(this.rfc, this.companyId).subscribe({
-                next: (r) => {
-                  if (r.result && r.result.id){
-                    this.clienteService.CambiarClienteOrden(order.id, r.result.id).subscribe({
-                      next: (r) => {
-                        if (r.result && !r.result.error) {
-                          localStorage.setItem("order", JSON.stringify(r.result?.order));
-                          localStorage.setItem("rfc", this.rfc)
-                          this.router.navigate(['orden'], {queryParams: {ciudad: this.companyId}})
-                        } else {
-                          this.isLoading = false;
-                          this.toastr.error('Ha ocurrido un error al cambiar el cliente de la orden: ' + r.result?.message, 'Error');
-                        }
-                      }, error: (e) => {
-                        this.isLoading = false;
-                        console.log(e)
-                      }
-                    });
-                  } else {
-                    this.isLoading = false;
-                    localStorage.setItem("order", JSON.stringify(order));
-                    localStorage.setItem("rfc", this.rfc)
-                    this.router.navigate(['cliente'], {queryParams: {ciudad: this.companyId, order_id: order.id}});
-                  }
-                }, error: (e) => {
-                  this.isLoading = false;
-                  console.log(e)
-                  this.toastr.error('Ha ocurrido un error al obtener los datos del cliente', 'Error');
-                }
-              });
-              // console.log(clientExists)
+    const validate = await this.validateClient(this.rfc, this.companyId)
 
-              
-            } else {
+    if (!validate) {
+      return;
+    } else {
+      this.busquedaService.SearchOrder(this.pointOfSale, this.saleRef, this.saleRefTicket, this.companyId, parseInt(this.tipo), this.saleDate).subscribe({
+        next: (r) => {
+          this.isLoading = false;
+          if (r.result && r.result.length == 0){
+            this.isLoading = false;
+            this.toastr.error('No se ha encontrado ninguna orden de venta', 'Error');
+          }
+          else if (r.result && r.result.length > 1){
+            this.isLoading = false;
+            this.toastr.warning('Esta orden de venta no puede ser facturada debido a que ha sido reembolsada', 'Advertencia');
+          }
+          else{
+            let order = r.result[0];
+            if (order.partner.rfc === this.rfc){
+              localStorage.setItem("order", JSON.stringify(order));
+              localStorage.setItem("rfc", this.rfc)
+              this.router.navigate(['orden'], {queryParams: {ciudad: this.companyId}})
+            }
+            else {
+              if (order.partner.rfc === GLOBAL.rfc && regex.test(this.normalizeText(order?.partner?.name))) {
+                this.clienteService.ObtenerCliente(this.rfc, this.companyId).subscribe({
+                  next: (r) => {
+                    if (r.result && r.result.id){
+                      this.clienteService.CambiarClienteOrden(order.id, r.result.id).subscribe({
+                        next: (r) => {
+                          if (r.result && !r.result.error) {
+                            localStorage.setItem("order", JSON.stringify(r.result?.order));
+                            localStorage.setItem("rfc", this.rfc)
+                            this.router.navigate(['orden'], {queryParams: {ciudad: this.companyId}})
+                          } else {
+                            this.isLoading = false;
+                            this.toastr.error('Ha ocurrido un error al cambiar el cliente de la orden: ' + r.result?.message, 'Error');
+                          }
+                        }, error: (e) => {
+                          this.isLoading = false;
+                          console.log(e)
+                        }
+                      });
+                    } else {
+                      this.isLoading = false;
+                      localStorage.setItem("order", JSON.stringify(order));
+                      localStorage.setItem("rfc", this.rfc);
+                      this.router.navigate(['cliente'], {queryParams: {ciudad: this.companyId, order_id: order.id}});
+                    }
+                  }, error: (e) => {
+                    this.isLoading = false;
+                    console.log(e)
+                    this.toastr.error('Ha ocurrido un error al obtener los datos del cliente', 'Error');
+                  }
+                });
+              } else {
+                this.isLoading = false;
+                // this.toastr.warning('Esta orden no puede ser facturada ya que está asignada a un cliente distinto', 'Advertencia');
+                Swal.fire({
+                  title: 'Parece que hay un pequeño inconveniente con tu orden',
+                  html: `<p>No se puede facturar porque está asignada a un cliente diferente. Te recomendaría verificar los detalles de la orden o contactar a nuestro equipo de <a class="font-bold underline" href="mailto:${this.soporte}">soporte</a>.</p>`,
+                  icon: 'warning',
+                  confirmButtonText: 'Entendido',
+                  confirmButtonColor: '#cc2128',
+                  allowOutsideClick: false
+                })
+                return;
+              }
+            }
+  
+          }
+          this.isLoading = false;
+        },
+        error: (e) => {
+          this.isLoading = false;
+          // alert('')
+          this.toastr.error('Ha ocurrido un error con el servicio al buscar la orden de venta', 'Error');
+        }
+      });
+    }
+  }
+
+  async validateClient(rfc: string, companyId: number): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.clienteService.ObtenerClientes(rfc, companyId).subscribe({
+        next: (r) => {
+          if (r.result){
+            if (r.result.length === 1){
+              if (r.result[0].x_studio_categoria_cliente === "Crédito") {
+                this.isLoading = false;
+                Swal.fire({
+                  title: 'Cliente de crédito',
+                  html: `<p>Si el cliente tiene un crédito activo, no podremos proceder con la solicitud. Si necesitas más información comunicarse con nuestro equipo de <a class="font-bold underline" href="mailto:${this.soporte}">soporte</a>.</p>`,
+                  icon: 'warning',
+                  confirmButtonText: 'Entendido',
+                  confirmButtonColor: '#cc2128',
+                  allowOutsideClick: false
+                })
+                resolve(false);
+              } else {
+                resolve(true);
+              }
+            } else if (r.result.length > 1) {
               this.isLoading = false;
-              // alert("Esta orden no puede ser facturada ya que está asignada a un cliente distinto");
-              this.toastr.warning('Esta orden no puede ser facturada ya que está asignada a un cliente distinto', 'Advertencia');
-              return;
+              Swal.fire({
+                title: 'RFC duplicado',
+                html: `<p>Queremos informarte que hemos detectado que hay dos clientes registrados con el mismo <strong>RFC</strong>. Esto puede causar confusiones en la gestión de sus datos y transacciones. Te recomendamos que revises la información o comunícate con nuestro equipo de <a class="font-bold underline" href="mailto:${this.soporte}">soporte</a>.</p>`,
+                icon: 'warning',
+                confirmButtonText: 'Entendido',
+                confirmButtonColor: '#cc2128',
+                allowOutsideClick: false
+              })
+              resolve(false);
+            } else {
+              resolve(true);
             }
           }
-
+        }, error: (e) => {
+          console.log(e);
+          reject(e);
         }
-        this.isLoading = false;
-      },
-      error: (e) => {
-        this.isLoading = false;
-        // alert('')
-        this.toastr.error('Ha ocurrido un error con el servicio al buscar la orden de venta', 'Error');
-      }
+      })
     });
   }
 

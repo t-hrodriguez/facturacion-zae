@@ -30,6 +30,16 @@ export class ClienteService {
     return this.httpClient.post(this.url + "cliente", JSON.stringify(body), HTTP_HEADERS);
   }
 
+  ObtenerClientes(rfc: string, cid: number): Observable<any>{
+    let body = {
+      "params": {
+        "rfc": rfc,
+        "cid": cid
+      }
+    };
+    return this.httpClient.post(this.url + "clientesrfc", JSON.stringify(body), HTTP_HEADERS);
+  }
+
   CambiarClienteOrden(orderId: number, partnerId: number): Observable<any>{
     let body = {
       "params": {
