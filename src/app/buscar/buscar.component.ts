@@ -160,7 +160,17 @@ export class BuscarComponent implements OnInit {
           }
           else{
             let order = r.result[0];
-            if (order.partner.rfc === this.rfc){
+            if (order.state === 'invoiced') {
+              Swal.fire({
+                title: 'Orden facturada',
+                html: `<p>Esta intentando realizar una acción sobre una orden que ya ha sido facturada.<br/> Si necesitas una copia de la factura o tienes alguna otra pregunta, te recomendamos que te pongas en contacto con nuestro equipo de <a class="font-bold underline" href="mailto:${this.soporte}">soporte</a>.</p>`,
+                icon: 'warning',
+                confirmButtonText: 'Entendido',
+                confirmButtonColor: '#cc2128',
+                allowOutsideClick: false
+              })
+              return;
+            } else if (order.partner.rfc === this.rfc){
               localStorage.setItem("order", JSON.stringify(order));
               localStorage.setItem("rfc", this.rfc)
               this.router.navigate(['orden'], {queryParams: {ciudad: this.companyId}})
