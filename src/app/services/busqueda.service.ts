@@ -1,9 +1,15 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {GLOBAL} from "./global";
-import {observableToBeFn} from "rxjs/internal/testing/TestScheduler";
 import {Observable} from "rxjs";
-import { TijuanaOffset, CiudadJuarezOffset, HermosilloOffset, AcapulcoOffset } from '../utils';
+import { 
+  TijuanaOffset, 
+  CiudadJuarezOffset, 
+  HermosilloOffset, 
+  AcapulcoOffset, 
+  EnsenadaOffset, 
+  MexicaliOffset 
+} from '../utils';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +21,9 @@ export class BusquedaService {
     '113': TijuanaOffset,
     '50': CiudadJuarezOffset,
     '46': HermosilloOffset,
-    '31': AcapulcoOffset
+    '31': AcapulcoOffset,
+    '43': EnsenadaOffset,
+    '52': MexicaliOffset
   }
 
   // {'id': '113', 'name': 'Tijuana'},

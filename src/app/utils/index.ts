@@ -11,6 +11,8 @@ const timeZones = {
   Hermosillo: 'America/Hermosillo',
   'Ciudad Juárez': 'America/Ciudad_Juarez',
   Acapulco: 'America/Mexico_City',
+  Ensenada: 'America/Tijuana',
+  Mexicali: 'America/Tijuana',
 }
 
 
@@ -18,3 +20,5 @@ export const TijuanaOffset = getUtcDifference(timeZones.Tijuana);
 export const HermosilloOffset = getUtcDifference(timeZones.Hermosillo);
 export const CiudadJuarezOffset = getUtcDifference(timeZones['Ciudad Juárez']);
 export const AcapulcoOffset = getUtcDifference(timeZones.Acapulco);
+export const EnsenadaOffset = getUtcDifference(timeZones.Ensenada);
+export const MexicaliOffset = getUtcDifference(timeZones.Mexicali);

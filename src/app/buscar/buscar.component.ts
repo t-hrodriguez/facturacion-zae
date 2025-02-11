@@ -27,12 +27,13 @@ export class BuscarComponent implements OnInit {
   public gasparRef: string = '';
   public saleRef: string = '';
   public saleRefTicket: string = '';
-  public saleDate!: Date;
+  public saleDate: string = '';
   private companyId!: number;
   public tipo: string = "0";
   public pointOfSales!: Array<any>;
   public showPOS: boolean = false;
   isLoading = false;
+  today = '';
 
   dataSearchBy = [
     { 
@@ -95,6 +96,11 @@ export class BuscarComponent implements OnInit {
 
   ngOnInit(): void {
     // this.openDialog();
+    // * to set a date by default
+    // this.saleDate = new Date().toISOString().split('T')[0];
+    const [year, month, day] = this.saleDate.split('-');
+    console.log()
+    console.log('date inserted: ', `${year}, ${month}, ${day}`)
     this.globalState.state$.subscribe({
       next: (state) => {
         this.soporte = state.email;
@@ -115,7 +121,7 @@ export class BuscarComponent implements OnInit {
         console.log(error);
         this.toastr.error('Ha ocurrido un error al obtener los puntos de venta, por favor reintenta en unos minutos', 'Error');
       }
-    });
+    }); 
   }
 
   openDialog(data: {title:string, description: string, image: string}[]): void {
@@ -147,7 +153,8 @@ export class BuscarComponent implements OnInit {
     if (!validate) {
       return;
     } else {
-      this.busquedaService.SearchOrder(this.pointOfSale, this.saleRef, this.saleRefTicket, this.companyId, parseInt(this.tipo), this.saleDate).subscribe({
+      const [year, month, day] = this.saleDate.split('-');
+      this.busquedaService.SearchOrder(this.pointOfSale, this.saleRef, this.saleRefTicket, this.companyId, parseInt(this.tipo), new Date(Number(year), Number(month), Number(day))).subscribe({
         next: (r) => {
           this.isLoading = false;
           if (r.result && r.result.length == 0){
