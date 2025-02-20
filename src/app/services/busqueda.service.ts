@@ -36,6 +36,7 @@ export class BusquedaService {
   }
 
   SearchOrder(pointOfSale:number, saleRef:string, saleRefTicket: string, companyId: number, tipo: number, date: Date): Observable<any>{
+    console.log('date searched: ', date);
     let args = []
     if (tipo == 1){
       // agregar guines a saleRefTicket despues del septimo caracter
