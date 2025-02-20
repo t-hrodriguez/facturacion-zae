@@ -154,7 +154,7 @@ export class BuscarComponent implements OnInit {
       return;
     } else {
       const [year, month, day] = this.saleDate.split('-');
-      this.busquedaService.SearchOrder(this.pointOfSale, this.saleRef, this.saleRefTicket, this.companyId, parseInt(this.tipo), new Date(Number(year), Number(month) - 1, Number(day))).subscribe({
+      this.busquedaService.SearchOrder(this.pointOfSale, this.saleRef, this.saleRefTicket, this.companyId, parseInt(this.tipo), this.saleDate).subscribe({
         next: (r) => {
           this.isLoading = false;
           if (r.result && r.result.length == 0){

@@ -35,7 +35,7 @@ export class BusquedaService {
     this.url = GLOBAL.url;
   }
 
-  SearchOrder(pointOfSale:number, saleRef:string, saleRefTicket: string, companyId: number, tipo: number, date: Date): Observable<any>{
+  SearchOrder(pointOfSale:number, saleRef:string, saleRefTicket: string, companyId: number, tipo: number, date: string): Observable<any>{
     console.log('date searched: ', date);
     let args = []
     if (tipo == 1){
