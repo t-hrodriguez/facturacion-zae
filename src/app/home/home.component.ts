@@ -16,7 +16,9 @@ export class HomeComponent implements OnInit {
     {'id': '46', 'name': 'Ciudad Juárez'},
     {'id': '31', 'name': 'Hermosillo'},
     {'id': '43', 'name': 'Ensenada'},
-    {'id': '52', 'name': 'Mexicali'}
+    {'id': '52', 'name': 'Mexicali'},
+    {'id': '88', 'name': 'Culiacán'},
+    {'id': '51', 'name': 'Los Mochis'}
   ]
 
   public ciudad = '0';

@@ -8,7 +8,9 @@ import {
   HermosilloOffset, 
   AcapulcoOffset, 
   EnsenadaOffset, 
-  MexicaliOffset 
+  MexicaliOffset, 
+  CuliacanOffset,
+  MochisOffset
 } from '../utils';
 
 @Injectable({
@@ -23,7 +25,9 @@ export class BusquedaService {
     '46': HermosilloOffset,
     '31': AcapulcoOffset,
     '43': EnsenadaOffset,
-    '52': MexicaliOffset
+    '52': MexicaliOffset,
+    '88': CuliacanOffset,
+    '51': MochisOffset
   }
 
   // {'id': '113', 'name': 'Tijuana'},

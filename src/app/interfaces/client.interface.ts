@@ -6,6 +6,13 @@ export interface IClient {
   l10n_mx_edi_fiscal_regime: number;
 }
 
+export interface IClientRfc {
+  id: number;
+  name: string;
+  vat: string;
+  x_studio_categoria_cliente: string;
+}
+
 export interface IClientResponse {
   error: boolean;
   message?: string;

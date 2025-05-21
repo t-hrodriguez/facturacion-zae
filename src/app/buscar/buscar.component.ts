@@ -9,6 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import Swal from 'sweetalert2';
 import { GlobalStateService } from '../services/globalState.service';
+import { IClientRfc } from '../interfaces/client.interface';
 
 @Component({
   selector: 'app-buscar',
@@ -99,7 +100,6 @@ export class BuscarComponent implements OnInit {
     // * to set a date by default
     // this.saleDate = new Date().toISOString().split('T')[0];
     const [year, month, day] = this.saleDate.split('-');
-    console.log()
     console.log('date inserted: ', `${year}, ${month}, ${day}`)
     this.globalState.state$.subscribe({
       next: (state) => {
@@ -246,6 +246,11 @@ export class BuscarComponent implements OnInit {
       this.clienteService.ObtenerClientes(rfc, companyId).subscribe({
         next: (r) => {
           if (r.result){
+            // clean clients arr to get onle Contado clients
+            const rLen = r.result.length;
+            if (rLen > 1)
+              r.result = r.result.filter((x: IClientRfc) => x?.x_studio_categoria_cliente === "Contado");
+            
             if (r.result.length === 1){
               if (r.result[0].x_studio_categoria_cliente === "Crédito") {
                 this.isLoading = false;
@@ -272,6 +277,17 @@ export class BuscarComponent implements OnInit {
                 allowOutsideClick: false
               })
               resolve(false);
+            } else if (r.result.length === 0){
+              // when the array is empty, we got an array of Credit clients
+              this.isLoading = false;
+              Swal.fire({
+                title: 'Cliente de crédito',
+                html: `<p>Si el cliente tiene un crédito activo, no podremos proceder con la solicitud. Si necesitas más información comunicarse con nuestro equipo de <a class="font-bold underline" href="mailto:${this.soporte}">soporte</a>.</p>`,
+                icon: 'warning',
+                confirmButtonText: 'Entendido',
+                confirmButtonColor: '#cc2128',
+                allowOutsideClick: false
+              })
             } else {
               resolve(true);
             }

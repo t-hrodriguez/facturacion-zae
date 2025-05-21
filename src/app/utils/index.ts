@@ -13,6 +13,8 @@ const timeZones = {
   Acapulco: 'America/Mexico_City',
   Ensenada: 'America/Tijuana',
   Mexicali: 'America/Tijuana',
+  Culiacan: 'America/Mazatlan',
+  Mochis: 'America/Mazatlan'
 }
 
 
@@ -22,3 +24,5 @@ export const CiudadJuarezOffset = getUtcDifference(timeZones['Ciudad Juárez']);
 export const AcapulcoOffset = getUtcDifference(timeZones.Acapulco);
 export const EnsenadaOffset = getUtcDifference(timeZones.Ensenada);
 export const MexicaliOffset = getUtcDifference(timeZones.Mexicali);
+export const CuliacanOffset = getUtcDifference(timeZones.Culiacan);
+export const MochisOffset = getUtcDifference(timeZones.Mochis);
